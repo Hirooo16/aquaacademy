@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<title>Aqua Academy - Education Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Material+Icons" rel="stylesheet" />
+<style>
+  /* Reset and base */
+  * {
+    margin: 0; padding: 0; box-sizing: border-box;
+  }
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #f9fafb;
+    color: #374151;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+  button {
+    font-family: inherit;
+    cursor: pointer;
+    border: none;
+    background: none;
+  }
+  /* Container max width */
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+    width: 100%;
+  }
+
+  /* HEADER */
+  header {
+    position: sticky;
+    top: 0;
+    background: #ffffffcc;
+    backdrop-filter: saturate(180%) blur(10px);
+    box-shadow: 0 2px 6px rgb(0 0 0 / 0.06);
+    z-index: 1000;
+  }
+  .header-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 16px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .logo {
+    font-weight: 700;
+    font-size: 28px;
+    background: linear-gradient(135deg, #06b6d4, #818cf8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  nav.nav-links {
+    display: flex;
+    gap: 24px;
+    align-items: center;
+  }
+  nav.nav-links button, nav.nav-links a {
+    font-weight: 600;
+    font-size: 16px;
+    color: #374151;
+    padding: 8px 12px;
+    border-radius: 12px;
+    transition: background-color 0.25s ease, color 0.25s ease;
+  }
+  nav.nav-links button:hover,
+  nav.nav-links a:hover {
+    background: #06b6d4;
+    color: white;
+  }
+
+  /* MAIN CONTENT AREA */
+  main {
+    flex-grow: 1;
+    padding: 40px 24px 80px;
+  }
+
+  /* TABS */
+  .tabs {
+    display: flex;
+    gap: 32px;
+    border-bottom: 2px solid #e0e7ff;
+    margin-bottom: 40px;
+    overflow-x: auto;
+  }
+  .tab-btn {
+    font-size: 18px;
+    font-weight: 700;
+    padding: 12px 0;
+    cursor: pointer;
+    color: #6b7280;
+    border-bottom: 3px solid transparent;
+    transition: color 0.3s ease, border-color 0.3s ease;
+    flex-shrink: 0;
+  }
+  .tab-btn[aria-selected="true"] {
+    color: #2563eb;
+    border-color: #2563eb;
+  }
+  .tab-btn:hover:not([aria-selected="true"]) {
+    color: #2563eb;
+  }
+
+  /* CONTENT SECTIONS */
+  section.tab-panel {
+    display: none;
+  }
+  section.tab-panel[aria-hidden="false"] {
+    display: block;
+  }
+
+  /* Education Content Cards */
+  .edu-card {
+    background: white;
+    border-radius: 16px;
+    padding: 32px;
+    box-shadow: 0 8px 20px rgb(0 0 0 / 0.05);
+    margin-bottom: 48px;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .edu-card h2 {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    color: #1e40af;
+  }
+  .edu-card p {
+    font-size: 16px;
+    line-height: 1.6;
+    color: #4b5563;
+  }
+
+  /* QUIZ SECTION */
+  .quiz-container {
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    background: #fefefe;
+    border-radius: 16px;
+    box-shadow: 0 8px 20px rgb(0 0 0 / 0.07);
+    padding: 24px;
+  }
+  .quiz-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+  }
+  .quiz-title {
+    font-weight: 700;
+    font-size: 24px;
+    color: #2563eb;
+  }
+  .quiz-progress {
+    font-weight: 600;
+    color: #4b5563;
+  }
+  .question {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: #1e40af;
+  }
+  .answers-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+  .answer-btn {
+    background: #e0e7ff;
+    border-radius: 12px;
+    padding: 16px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #374151;
+    box-shadow: 0 2px 8px rgb(0 0 0 / 0.1);
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  }
+  .answer-btn:hover:not(:disabled) {
+    background: #2563eb;
+    color: white;
+    box-shadow: 0 6px 14px rgb(37 99 235 / 0.5);
+  }
+  .answer-btn:disabled {
+    cursor: default;
+    opacity: 0.75;
+  }
+  .answer-btn.correct {
+    background: #22c55e !important;
+    color: white !important;
+    box-shadow: 0 6px 16px rgb(34 197 94 / 0.6) !important;
+  }
+  .answer-btn.incorrect {
+    background: #ef4444 !important;
+    color: white !important;
+    box-shadow: 0 6px 16px rgb(239 68 68 / 0.6) !important;
+  }
+  .quiz-controls {
+    display: flex;
+    justify-content: flex-end;
+  }
+  .btn-next {
+    background: #2563eb;
+    color: white;
+    padding: 14px 28px;
+    font-weight: 700;
+    font-size: 16px;
+    border-radius: 12px;
+    box-shadow: 0 6px 14px rgb(37 99 235 / 0.5);
+    transition: background-color 0.3s ease;
+  }
+  .btn-next:disabled {
+    background: #93c5fd;
+    cursor: default;
+    box-shadow: none;
+  }
+  .btn-next:hover:not(:disabled) {
+    background: #1d4ed8;
+  }
+
+  /* LEADERBOARD */
+  .leaderboard-container {
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 8px 20px rgb(0 0 0 / 0.06);
+    padding: 24px;
+  }
+  .leaderboard-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #2563eb;
+    margin-bottom: 24px;
+    text-align: center;
+  }
+  table.leaderboard-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 16px;
+  }
+  table.leaderboard-table th,
+  table.leaderboard-table td {
+    padding: 12px 16px;
+    text-align: left;
+    border-bottom: 1px solid #e5e7eb;
+  }
+  table.leaderboard-table th {
+    background: #e0e7ff;
+    color: #1e40af;
+  }
+  table.leaderboard-table tbody tr:hover {
+    background: #f0f9ff;
+  }
+
+  /* MODAL BACKDROP */
+  .modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1200;
+  }
+  /* MODAL CONTAINER */
+  .modal {
+    background: white;
+    border-radius: 16px;
+    padding: 32px 36px;
+    width: 360px;
+    max-width: 90vw;
+    box-shadow: 0 0 20px rgb(0 0 0 / 0.2);
+    position: relative;
+  }
+  .modal h2 {
+    margin-bottom: 24px;
+    color: #1e40af;
+    font-weight: 700;
+    font-size: 24px;
+    text-align: center;
+  }
+  .modal label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 6px;
+    margin-top: 16px;
+    color: #374151;
+  }
+  .modal input[type="text"],
+  .modal input[type="email"],
+  .modal input[type="password"] {
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 12px;
+    border: 1.5px solid #d1d5db;
+    font-size: 16px;
+    font-family: inherit;
+    transition: border-color 0.3s ease;
+  }
+  .modal input[type="text"]:focus,
+  .modal input[type="email"]:focus,
+  .modal input[type="password"]:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 8px rgb(37 99 235 / 0.5);
+  }
+  .modal .form-error {
+    color: #ef4444;
+    font-size: 14px;
+    margin-top: 6px;
+  }
+  .modal button.submit-btn {
+    margin-top: 24px;
+    background: #2563eb;
+    color: white;
+    font-weight: 700;
+    font-size: 16px;
+    padding: 14px 0;
+    width: 100%;
+    border-radius: 12px;
+    box-shadow: 0 6px 14px rgb(37 99 235 / 0.5);
+    transition: background-color 0.3s ease;
+  }
+  .modal button.submit-btn:hover {
+    background: #1d4ed8;
+  }
+  .modal .close-btn {
+    position: absolute;
+    top: 14px;
+    right: 20px;
+    font-size: 28px;
+    color: #6b7280;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-weight: 700;
+    line-height: 1;
+    transition: color 0.3s ease;
+  }
+  .modal .close-btn:hover {
+    color: #2563eb;
+  }
+
+  /* Responsive */
+  @media (max-width: 640px) {
+    header .header-inner {
+      flex-direction: column;
+      gap: 16px;
+    }
+    nav.nav-links {
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    main {
+      padding: 32px 16px 64px;
+    }
+    .quiz-container, .leaderboard-container, .edu-card {
+      padding: 20px;
+    }
+    .edu-card {
+      padding: 24px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<header role="banner">
+  <div class="header-inner container">
+    <a href="#" class="logo" aria-label="Aqua Academy Home">Aqua Academy</a>
+    <nav class="nav-links" role="navigation" aria-label="Primary Navigation">
+      <button id="btn-login" type="button" aria-haspopup="dialog" aria-controls="login-modal">Login</button>
+      <button id="btn-register" type="button" aria-haspopup="dialog" aria-controls="register-modal">Register</button>
+    </nav>
+  </div>
+</header>
+
+<main role="main" class="container" tabindex="-1">
+  <div role="tablist" aria-label="Subject navigation" class="tabs" id="subject-tabs">
+    <button role="tab" aria-selected="true" id="tab-math" aria-controls="panel-math" tabindex="0" class="tab-btn">Matematika</button>
+    <button role="tab" aria-selected="false" id="tab-science" aria-controls="panel-science" tabindex="-1" class="tab-btn">Sains</button>
+    <button role="tab" aria-selected="false" id="tab-language" aria-controls="panel-language" tabindex="-1" class="tab-btn">Bahasa</button>
+    <button role="tab" aria-selected="false" id="tab-leaderboard" aria-controls="panel-leaderboard" tabindex="-1" class="tab-btn">Leaderboard</button>
+  </div>
+
+  <!-- Mathematics Content -->
+  <section role="tabpanel" id="panel-math" aria-labelledby="tab-math" class="tab-panel" aria-hidden="false">
+
+    <article class="edu-card" aria-label="Konten pembelajaran Matematika">
+      <h2>Matematika Dasar</h2>
+      <p>Pelajari konsep penting matematika seperti operasi dasar, aljabar, geometri, dan pemecahan masalah. Fokus pada latihan agar paham konsep dan dapat mengerjakan soal dengan tepat.</p>
+    </article>
+
+    <div class="quiz-container" aria-label="Quiz Matematika">
+      <header class="quiz-header">
+        <h3 class="quiz-title">Quiz Matematika</h3>
+        <div class="quiz-progress" id="math-quiz-progress">Soal 1 dari 5</div>
+      </header>
+      <div id="math-question-container" aria-live="polite"></div>
+      <div class="quiz-controls">
+        <button id="math-next-btn" class="btn-next" disabled>Selanjutnya</button>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- Science Content -->
+  <section role="tabpanel" id="panel-science" aria-labelledby="tab-science" class="tab-panel" aria-hidden="true">
+
+    <article class="edu-card" aria-label="Konten pembelajaran Sains">
+      <h2>Sains Dasar</h2>
+      <p>Pelajari konsep sains seperti fisika, kimia, biologi dalam kehidupan sehari-hari. Eksplorasi eksperimen sederhana dan pengenalan metode ilmiah untuk mengasah pengetahuan dan rasa ingin tahu.</p>
+    </article>
+
+    <div class="quiz-container" aria-label="Quiz Sains">
+      <header class="quiz-header">
+        <h3 class="quiz-title">Quiz Sains</h3>
+        <div class="quiz-progress" id="science-quiz-progress">Soal 1 dari 5</div>
+      </header>
+      <div id="science-question-container" aria-live="polite"></div>
+      <div class="quiz-controls">
+        <button id="science-next-btn" class="btn-next" disabled>Selanjutnya</button>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- Language Content -->
+  <section role="tabpanel" id="panel-language" aria-labelledby="tab-language" class="tab-panel" aria-hidden="true">
+
+    <article class="edu-card" aria-label="Konten pembelajaran Bahasa">
+      <h2>Pelajaran Bahasa</h2>
+      <p>Pelajari dasar-dasar bahasa termasuk tata bahasa, kosakata, dan komunikasi yang efektif. Fokus pada latihan membaca dan menulis untuk meningkatkan kemampuan berbahasa secara menyeluruh.</p>
+    </article>
+
+    <div class="quiz-container" aria-label="Quiz Bahasa">
+      <header class="quiz-header">
+        <h3 class="quiz-title">Quiz Bahasa</h3>
+        <div class="quiz-progress" id="language-quiz-progress">Soal 1 dari 5</div>
+      </header>
+      <div id="language-question-container" aria-live="polite"></div>
+      <div class="quiz-controls">
+        <button id="language-next-btn" class="btn-next" disabled>Selanjutnya</button>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- Leaderboard Content -->
+  <section role="tabpanel" id="panel-leaderboard" aria-labelledby="tab-leaderboard" class="tab-panel" aria-hidden="true">
+    <div class="leaderboard-container" aria-label="Leaderboard kompetisi quiz">
+      <h2 class="leaderboard-title">Leaderboard Quiz Aqua Academy</h2>
+      <table class="leaderboard-table" aria-describedby="leaderboard-desc">
+        <caption id="leaderboard-desc" class="sr-only">Daftar peringkat peserta quiz berdasarkan total skor</caption>
+        <thead>
+          <tr>
+            <th scope="col">Posisi</th>
+            <th scope="col">Nama Pengguna</th>
+            <th scope="col">Topik</th>
+            <th scope="col">Skor</th>
+            <th scope="col">Tanggal</th>
+          </tr>
+        </thead>
+        <tbody id="leaderboard-body">
+          <!-- leaderboard rows inserted here by JS -->
+        </tbody>
+      </table>
+    </div>
+  </section>
+</main>
+
+<!-- LOGIN MODAL -->
+<div class="modal-backdrop" id="login-modal" role="dialog" aria-modal="true" aria-labelledby="login-title" hidden>
+  <div class="modal">
+    <button class="close-btn" aria-label="Tutup login">&times;</button>
+    <h2 id="login-title">Masuk ke Aqua Academy</h2>
+    <form id="login-form" novalidate>
+      <label for="login-email">Email</label>
+      <input type="email" id="login-email" name="email" required autocomplete="email" />
+      <div class="form-error" id="login-email-error" aria-live="polite"></div>
+
+      <label for="login-password">Password</label>
+      <input type="password" id="login-password" name="password" required autocomplete="current-password" />
+      <div class="form-error" id="login-password-error" aria-live="polite"></div>
+
+      <button type="submit" class="submit-btn">Masuk</button>
+    </form>
+  </div>
+</div>
+
+<!-- REGISTER MODAL -->
+<div class="modal-backdrop" id="register-modal" role="dialog" aria-modal="true" aria-labelledby="register-title" hidden>
+  <div class="modal">
+    <button class="close-btn" aria-label="Tutup registrasi">&times;</button>
+    <h2 id="register-title">Daftar Akun Baru</h2>
+    <form id="register-form" novalidate>
+      <label for="register-email">Email</label>
+      <input type="email" id="register-email" name="email" required autocomplete="email" />
+      <div class="form-error" id="register-email-error" aria-live="polite"></div>
+
+      <label for="register-password">Password</label>
+      <input type="password" id="register-password" name="password" required autocomplete="new-password" />
+      <div class="form-error" id="register-password-error" aria-live="polite"></div>
+
+      <label for="register-password-confirm">Konfirmasi Password</label>
+      <input type="password" id="register-password-confirm" name="passwordConfirm" required autocomplete="new-password" />
+      <div class="form-error" id="register-password-confirm-error" aria-live="polite"></div>
+
+      <button type="submit" class="submit-btn">Daftar</button>
+    </form>
+  </div>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
+  import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js";
+  import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-database.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDR04p3qXOTTOp9OEwz-m-M46j5x2FKuKM",
+    authDomain: "dungeon-223d9.firebaseapp.com",
+    databaseURL: "https://dungeon-223d9-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "dungeon-223d9",
+    storageBucket: "dungeon-223d9.appspot.com",
+    messagingSenderId: "144074668480",
+    appId: "1:144074668480:web:a26bbacfa551112b15f025",
+    measurementId: "G-H4TYZ2Y5RQ"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const database = getDatabase(app);
+
+  // Modal elements
+  const loginModal = document.getElementById('login-modal');
+  const registerModal = document.getElementById('register-modal');
+  const btnLoginOpen = document.getElementById('btn-login');
+  const btnRegisterOpen = document.getElementById('btn-register');
+  const navLinks = document.querySelector('nav.nav-links');
+
+  // Open and Close modal functions
+  function openModal(modal) {
+    modal.hidden = false;
+    modal.querySelector('input').focus();
+    document.body.style.overflow = 'hidden';
+  }
+  function closeModal(modal) {
+    modal.hidden = true;
+    document.body.style.overflow = '';
+    clearFormErrors(modal);
+    modal.querySelector('form').reset();
+  }
+
+  btnLoginOpen && btnLoginOpen.addEventListener('click', () => openModal(loginModal));
+  btnRegisterOpen && btnRegisterOpen.addEventListener('click', () => openModal(registerModal));
+  [loginModal, registerModal].forEach(modal => {
+    modal.querySelector('.close-btn').addEventListener('click', () => closeModal(modal));
+    modal.addEventListener('click', e => {
+      if (e.target === modal) closeModal(modal);
+    });
+    modal.addEventListener('keydown', e => {
+      if (e.key === 'Escape') closeModal(modal);
+    });
+  });
+
+  // Clear form errors
+  function clearFormErrors(modal) {
+    modal.querySelectorAll('.form-error').forEach(el => el.textContent = '');
+  }
+
+  // Email validation helper
+  function validateEmail(email) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  }
+
+  // Register form submission
+  const registerForm = document.getElementById('register-form');
+  registerForm.addEventListener('submit', async e => {
+    e.preventDefault();
+    clearFormErrors(registerModal);
+    const email = registerForm.email.value.trim();
+    const password = registerForm.password.value;
+    const confirm = registerForm.passwordConfirm.value;
+    let valid = true;
+    if (!email) {
+      document.getElementById('register-email-error').textContent = 'Email wajib diisi.';
+      valid = false;
+    } else if (!validateEmail(email)) {
+      document.getElementById('register-email-error').textContent = 'Format email tidak valid.';
+      valid = false;
+    }
+    if (password.length < 6) {
+      document.getElementById('register-password-error').textContent = 'Password minimal 6 karakter.';
+      valid = false;
+    }
+    if (confirm !== password) {
+      document.getElementById('register-password-confirm-error').textContent = 'Konfirmasi password tidak sama.';
+      valid = false;
+    }
+    if (!valid) return;
+
+    try {
+      await createUserWithEmailAndPassword(auth, email, password);
+      alert('Registrasi berhasil. Silakan login.');
+      closeModal(registerModal);
+    } catch (error) {
+      document.getElementById('register-email-error').textContent = error.message;
+    }
+  });
+
+  // Login form submission
+  const loginForm = document.getElementById('login-form');
+  loginForm.addEventListener('submit', async e => {
+    e.preventDefault();
+    clearFormErrors(loginModal);
+    const email = loginForm.email.value.trim();
+    const password = loginForm.password.value;
+    let valid = true;
+    if (!email) {
+      document.getElementById('login-email-error').textContent = 'Email wajib diisi.';
+      valid = false;
+    } else if (!validateEmail(email)) {
+      document.getElementById('login-email-error').textContent = 'Format email tidak valid.';
+      valid = false;
+    }
+    if (!password) {
+      document.getElementById('login-password-error').textContent = 'Password wajib diisi.';
+      valid = false;
+    }
+    if (!valid) return;
+
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      alert(`Selamat datang, ${email.split('@')[0]}!`);
+      closeModal(loginModal);
+      updateLoginState();
+    } catch (error) {
+      document.getElementById('login-password-error').textContent = error.message;
+    }
+  });
+
+  // Logout
+  function logout() {
+    signOut(auth).then(() => {
+      alert('Anda telah keluar.');
+      location.reload();
+    }).catch(error => {
+      console.error('Logout error', error);
+    });
+  }
+
+  // Update navigation based on auth state
+  function updateLoginState() {
+    const user = auth.currentUser;
+    if (user) {
+      const emailName = user.email.split('@')[0];
+      navLinks.innerHTML = `
+        <span style="font-weight:600; color:#2563eb;">Halo, ${emailName}</span>
+        <button id="btn-logout" type="button">Keluar</button>
+      `;
+      document.getElementById('btn-logout').addEventListener('click', logout);
+    } else {
+      navLinks.innerHTML = `
+        <button id="btn-login" type="button" aria-haspopup="dialog" aria-controls="login-modal">Login</button>
+        <button id="btn-register" type="button" aria-haspopup="dialog" aria-controls="register-modal">Register</button>
+      `;
+      document.getElementById('btn-login').addEventListener('click', () => openModal(loginModal));
+      document.getElementById('btn-register').addEventListener('click', () => openModal(registerModal));
+    }
+  }
+
+  onAuthStateChanged(auth, () => {
+    updateLoginState();
+  });
+
+  // Tab functionality
+  const tabs = document.querySelectorAll('.tab-btn');
+  const tabPanels = document.querySelectorAll('.tab-panel');
+  tabPanels.forEach(panel => panel.setAttribute('aria-hidden', 'true'));
+  tabPanels[0].setAttribute('aria-hidden', 'false');
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      tabs.forEach(t => {
+        t.setAttribute('aria-selected', 'false');
+        t.setAttribute('tabindex', '-1');
+      });
+      tabPanels.forEach(p => p.setAttribute('aria-hidden', 'true'));
+      tab.setAttribute('aria-selected', 'true');
+      tab.setAttribute('tabindex', '0');
+      document.getElementById(tab.getAttribute('aria-controls')).setAttribute('aria-hidden', 'false');
+    });
+  });
+
+  // Quiz data and class (unchanged from previous)
+  const quizData = {
+    matematika: [
+      { question: "Berapa hasil dari 5 + 7?", answers: ["10", "12", "13", "11"], correct: 1 },
+      { question: "Apa nama sudut yang besarnya 90 derajat?", answers: ["Sudut Lancip", "Sudut Tumpul", "Sudut Siku-siku", "Sudut Refleks"], correct: 2 },
+      { question: "Jika x + 3 = 10, maka x adalah ...?", answers: ["13", "7", "3", "10"], correct: 1 },
+      { question: "Berapa luas persegi dengan sisi 4 cm?", answers: ["8", "12", "16", "20"], correct: 2 },
+      { question: "Manakah bilangan prima?", answers: ["9", "15", "7", "21"], correct: 2 }
+    ],
+    sain: [
+      { question: "Air akan berubah menjadi uap pada suhu ...?", answers: ["100°C", "0°C", "50°C", "90°C"], correct: 0 },
+      { question: "Planet yang dikenal sebagai planet merah adalah ...?", answers: ["Venus", "Mars", "Jupiter", "Saturnus"], correct: 1 },
+      { question: "Bagian terkecil dari makhluk hidup adalah ...?", answers: ["Jaringan", "Organisme", "Sel", "Populasi"], correct: 2 },
+      { question: "Apa alat pengukur suhu yang umum digunakan?", answers: ["Barometer", "Termometer", "Anemometer", "Hygrometer"], correct: 1 },
+      { question: "Fotosintesis terjadi pada bagian ...?", answers: ["Akar", "Batang", "Daun", "Bunga"], correct: 2 }
+    ],
+    bahasa: [
+      { question: "Apa arti kata 'rumah' dalam Bahasa Inggris?", answers: ["Home", "House", "Office", "Building"], correct: 1 },
+      { question: "Kalimat yang benar dalam Bahasa Indonesia adalah ...?", answers: ["Saya makan nasi setiap hari", "Saya makan nasi setiap hari ini", "Saya nasi makan setiap hari", "Saya setiap hari makan nasi"], correct: 0 },
+      { question: "Manakah sinonim dari kata 'cepat'?", answers: ["Lambat", "Kilat", "Berat", "Kasar"], correct: 1 },
+      { question: "Apa arti kata 'beautiful' dalam Bahasa Indonesia?", answers: ["Cantik", "Buruk", "Tua", "Jauh"], correct: 0 },
+      { question: "Kalimat tanya yang benar adalah ...?", answers: ["Siapa nama kamu?", "Nama siapa kamu?", "Siapa kamu nama?", "Nama kamu siapa?"], correct: 0 }
+    ]
+  };
+
+  class Quiz {
+    constructor(topic) {
+      this.topic = topic;
+      this.questions = quizData[topic];
+      this.currentIndex = 0;
+      this.score = 0;
+    }
+    getCurrentQuestion() {
+      return this.questions[this.currentIndex];
+    }
+    answer(index) {
+      const currentQ = this.getCurrentQuestion();
+      if (index === currentQ.correct) {
+        this.score++;
+        return true;
+      }
+      return false;
+    }
+    next() {
+      this.currentIndex++;
+      return this.currentIndex < this.questions.length;
+    }
+    reset() {
+      this.currentIndex = 0;
+      this.score = 0;
+    }
+  }
+
+  function createAnswerButton(text, index, onClick) {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'answer-btn';
+    btn.textContent = text;
+    btn.addEventListener('click', () => onClick(index, btn));
+    return btn;
+  }
+
+  function setupQuizUI(topic, containerId, progressId, nextBtnId) {
+    const quiz = new Quiz(topic);
+    const container = document.getElementById(containerId);
+    const progressDisplay = document.getElementById(progressId);
+    const nextBtn = document.getElementById(nextBtnId);
+    let selectedAnswer = null;
+
+    function displayQuestion() {
+      const q = quiz.getCurrentQuestion();
+      container.innerHTML = '';
+      progressDisplay.textContent = `Soal ${quiz.currentIndex + 1} dari ${quiz.questions.length}`;
+
+      const questionEl = document.createElement('p');
+      questionEl.className = 'question';
+      questionEl.textContent = q.question;
+      container.appendChild(questionEl);
+
+      const answersList = document.createElement('div');
+      answersList.className = 'answers-list';
+
+      q.answers.forEach((ans, i) => {
+        const btn = createAnswerButton(ans, i, (idx, btnEl) => {
+          if (selectedAnswer !== null) return;
+          selectedAnswer = idx;
+          const isCorrect = quiz.answer(idx);
+          Array.from(answersList.children).forEach(b => b.disabled = true);
+          if (isCorrect) btnEl.classList.add('correct');
+          else {
+            btnEl.classList.add('incorrect');
+            const correctBtn = answersList.children[q.correct];
+            correctBtn.classList.add('correct');
+          }
+          nextBtn.disabled = false;
+        });
+        answersList.appendChild(btn);
+      });
+
+      container.appendChild(answersList);
+      nextBtn.disabled = true;
+      selectedAnswer = null;
+    }
+
+    nextBtn.addEventListener('click', () => {
+      const hasNext = quiz.next();
+      if (hasNext) {
+        displayQuestion();
+      } else {
+        alert(`Quiz selesai! Skor Anda: ${quiz.score} dari ${quiz.questions.length}`);
+        saveResult(quiz.topic, auth.currentUser, quiz.score);
+        nextBtn.disabled = true;
+        renderLeaderboard();
+        quiz.reset();
+        displayQuestion();
+        activateTab('tab-leaderboard');
+      }
+    });
+
+    displayQuestion();
+    return quiz;
+  }
+
+  function saveResult(topic, user, score) {
+    if (!user) return;
+    const name = user.email.split('@')[0];
+    const dbRef = ref(database, 'leaderboard');
+    push(dbRef, {
+      name,
+      topic: capitalize(topic),
+      score,
+      date: new Date().toLocaleDateString('id-ID')
+    });
+  }
+
+  function renderLeaderboard() {
+    const tbody = document.getElementById('leaderboard-body');
+    tbody.innerHTML = '';
+    const dbRef = ref(database, 'leaderboard');
+    onValue(dbRef, (snapshot) => {
+      const data = snapshot.val();
+      tbody.innerHTML = '';
+      if (!data) {
+        const tr = document.createElement('tr');
+        const td = document.createElement('td');
+        td.textContent = 'Belum ada hasil quiz.';
+        td.colSpan = 5;
+        td.style.textAlign = 'center';
+        tr.appendChild(td);
+        tbody.appendChild(tr);
+        return;
+      }
+      const entries = Object.values(data);
+      entries.sort((a,b) => b.score - a.score);
+      const top = entries.slice(0, 50);
+      top.forEach((entry,i) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${i+1}</td><td>${entry.name}</td><td>${entry.topic}</td><td>${entry.score}</td><td>${entry.date}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }, { onlyOnce: true });
+  }
+
+  function activateTab(tabId) {
+    const tab = document.getElementById(tabId);
+    tab.click();
+  }
+
+  const mathQuiz = setupQuizUI('matematika', 'math-question-container', 'math-quiz-progress', 'math-next-btn');
+  const scienceQuiz = setupQuizUI('sain', 'science-question-container', 'science-quiz-progress', 'science-next-btn');
+  const languageQuiz = setupQuizUI('bahasa', 'language-question-container', 'language-quiz-progress', 'language-next-btn');
+
+  // Initial leaderboard render
+  renderLeaderboard();
+</script>
+
+</body>
+</html>
+
