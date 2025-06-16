@@ -287,7 +287,7 @@
     background: white;
     border-radius: 16px;
     padding: 32px 36px;
-    width: 360px;
+    width: 400px;
     max-width: 90vw;
     box-shadow: 0 0 20px rgb(0 0 0 / 0.2);
     position: relative;
@@ -359,26 +359,19 @@
     color: #2563eb;
   }
 
-  /* Responsive */
-  @media (max-width: 640px) {
-    header .header-inner {
-      flex-direction: column;
-      gap: 16px;
-    }
-    nav.nav-links {
-      gap: 12px;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-    main {
-      padding: 32px 16px 64px;
-    }
-    .quiz-container, .leaderboard-container, .edu-card {
-      padding: 20px;
-    }
-    .edu-card {
-      padding: 24px;
-    }
+  /* Toggle forms inside modal */
+  .form-toggle {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 14px;
+  }
+  .form-toggle button {
+    background: none;
+    border: none;
+    color: #2563eb;
+    cursor: pointer;
+    font-weight: 600;
+    padding: 0;
   }
 </style>
 <body>
@@ -387,8 +380,7 @@
   <div class="header-inner container">
     <a href="#" class="logo" aria-label="Aqua Academy Home">Aqua Academy</a>
     <nav class="nav-links" role="navigation" aria-label="Primary Navigation">
-      <button id="btn-login" type="button" aria-haspopup="dialog" aria-controls="login-modal">Login</button>
-      <button id="btn-register" type="button" aria-haspopup="dialog" aria-controls="register-modal">Register</button>
+      <button id="btn-login" type="button" aria-haspopup="dialog" aria-controls="auth-modal">Masuk</button>
     </nav>
   </div>
 </header>
@@ -401,14 +393,11 @@
     <button role="tab" aria-selected="false" id="tab-leaderboard" aria-controls="panel-leaderboard" tabindex="-1" class="tab-btn">Leaderboard</button>
   </div>
 
-  <!-- Mathematics Content -->
   <section role="tabpanel" id="panel-math" aria-labelledby="tab-math" class="tab-panel" aria-hidden="false">
-
     <article class="edu-card" aria-label="Konten pembelajaran Matematika">
       <h2>Matematika Dasar</h2>
       <p>Pelajari konsep penting matematika seperti operasi dasar, aljabar, geometri, dan pemecahan masalah. Fokus pada latihan agar paham konsep dan dapat mengerjakan soal dengan tepat.</p>
     </article>
-
     <div class="quiz-container" aria-label="Quiz Matematika">
       <header class="quiz-header">
         <h3 class="quiz-title">Quiz Matematika</h3>
@@ -419,17 +408,13 @@
         <button id="math-next-btn" class="btn-next" disabled>Selanjutnya</button>
       </div>
     </div>
-
   </section>
 
-  <!-- Science Content -->
   <section role="tabpanel" id="panel-science" aria-labelledby="tab-science" class="tab-panel" aria-hidden="true">
-
     <article class="edu-card" aria-label="Konten pembelajaran Sains">
       <h2>Sains Dasar</h2>
       <p>Pelajari konsep sains seperti fisika, kimia, biologi dalam kehidupan sehari-hari. Eksplorasi eksperimen sederhana dan pengenalan metode ilmiah untuk mengasah pengetahuan dan rasa ingin tahu.</p>
     </article>
-
     <div class="quiz-container" aria-label="Quiz Sains">
       <header class="quiz-header">
         <h3 class="quiz-title">Quiz Sains</h3>
@@ -440,17 +425,13 @@
         <button id="science-next-btn" class="btn-next" disabled>Selanjutnya</button>
       </div>
     </div>
-
   </section>
 
-  <!-- Language Content -->
   <section role="tabpanel" id="panel-language" aria-labelledby="tab-language" class="tab-panel" aria-hidden="true">
-
     <article class="edu-card" aria-label="Konten pembelajaran Bahasa">
       <h2>Pelajaran Bahasa</h2>
       <p>Pelajari dasar-dasar bahasa termasuk tata bahasa, kosakata, dan komunikasi yang efektif. Fokus pada latihan membaca dan menulis untuk meningkatkan kemampuan berbahasa secara menyeluruh.</p>
     </article>
-
     <div class="quiz-container" aria-label="Quiz Bahasa">
       <header class="quiz-header">
         <h3 class="quiz-title">Quiz Bahasa</h3>
@@ -461,10 +442,8 @@
         <button id="language-next-btn" class="btn-next" disabled>Selanjutnya</button>
       </div>
     </div>
-
   </section>
 
-  <!-- Leaderboard Content -->
   <section role="tabpanel" id="panel-leaderboard" aria-labelledby="tab-leaderboard" class="tab-panel" aria-hidden="true">
     <div class="leaderboard-container" aria-label="Leaderboard kompetisi quiz">
       <h2 class="leaderboard-title">Leaderboard Quiz Aqua Academy</h2>
@@ -479,63 +458,49 @@
             <th scope="col">Tanggal</th>
           </tr>
         </thead>
-        <tbody id="leaderboard-body">
-          <!-- leaderboard rows inserted here by JS -->
-        </tbody>
+        <tbody id="leaderboard-body"></tbody>
       </table>
     </div>
   </section>
 </main>
 
-<!-- LOGIN MODAL -->
-<div class="modal-backdrop" id="login-modal" role="dialog" aria-modal="true" aria-labelledby="login-title" hidden>
-  <div class="modal">
-    <button class="close-btn" aria-label="Tutup login">&times;</button>
-    <h2 id="login-title">Masuk ke Aqua Academy</h2>
-    <form id="login-form" novalidate>
-      <label for="login-email">Email</label>
-      <input type="email" id="login-email" name="email" required autocomplete="email" />
-      <div class="form-error" id="login-email-error" aria-live="polite"></div>
-
-      <label for="login-password">Password</label>
-      <input type="password" id="login-password" name="password" required autocomplete="current-password" />
-      <div class="form-error" id="login-password-error" aria-live="polite"></div>
-
-      <button type="submit" class="submit-btn">Masuk</button>
-
-      <p style="margin-top:16px; text-align:center; font-size:14px;">
-        Belum punya akun?
-        <button type="button" id="link-register" style="background:none; border:none; color:#2563eb; cursor:pointer; font-weight:600;">Daftar di sini</button>
+<!-- AUTH MODAL (Login + Registration in one modal with toggle) -->
+<div class="modal-backdrop" id="auth-modal" role="dialog" aria-modal="true" aria-labelledby="auth-title" hidden>
+  <div class="modal" role="document">
+    <button class="close-btn" aria-label="Tutup modal">&times;</button>
+    <div id="login-form-container">
+      <h2 id="auth-title">Masuk ke Aqua Academy</h2>
+      <form id="login-form" novalidate>
+        <label for="login-email">Email</label>
+        <input type="email" id="login-email" name="email" required autocomplete="email" />
+        <div class="form-error" id="login-email-error" aria-live="polite"></div>
+        <label for="login-password">Password</label>
+        <input type="password" id="login-password" name="password" required autocomplete="current-password" />
+        <div class="form-error" id="login-password-error" aria-live="polite"></div>
+        <button type="submit" class="submit-btn">Masuk</button>
+      </form>
+      <p class="form-toggle">
+        Belum punya akun? <button id="show-register" type="button">Daftar di sini</button>
       </p>
-    </form>
-  </div>
-</div>
-
-<!-- REGISTER MODAL -->
-<div class="modal-backdrop" id="register-modal" role="dialog" aria-modal="true" aria-labelledby="register-title" hidden>
-  <div class="modal">
-    <button class="close-btn" aria-label="Tutup registrasi">&times;</button>
-    <h2 id="register-title">Daftar Akun Baru</h2>
-    <form id="register-form" novalidate>
-      <label for="register-email">Email</label>
-      <input type="email" id="register-email" name="email" required autocomplete="email" />
-      <div class="form-error" id="register-email-error" aria-live="polite"></div>
-
-      <label for="register-password">Password</label>
-      <input type="password" id="register-password" name="password" required autocomplete="new-password" />
-      <div class="form-error" id="register-password-error" aria-live="polite"></div>
-
-      <label for="register-password-confirm">Konfirmasi Password</label>
-      <input type="password" id="register-password-confirm" name="passwordConfirm" required autocomplete="new-password" />
-      <div class="form-error" id="register-password-confirm-error" aria-live="polite"></div>
-
-      <button type="submit" class="submit-btn">Daftar</button>
-
-      <p style="margin-top:16px; text-align:center; font-size:14px;">
-        Sudah punya akun?
-        <button type="button" id="link-login" style="background:none; border:none; color:#2563eb; cursor:pointer; font-weight:600;">Masuk di sini</button>
+    </div>
+    <div id="register-form-container" hidden>
+      <h2>Daftar Akun Baru</h2>
+      <form id="register-form" novalidate>
+        <label for="register-email">Email</label>
+        <input type="email" id="register-email" name="email" required autocomplete="email" />
+        <div class="form-error" id="register-email-error" aria-live="polite"></div>
+        <label for="register-password">Password</label>
+        <input type="password" id="register-password" name="password" required autocomplete="new-password" />
+        <div class="form-error" id="register-password-error" aria-live="polite"></div>
+        <label for="register-password-confirm">Konfirmasi Password</label>
+        <input type="password" id="register-password-confirm" name="passwordConfirm" required autocomplete="new-password" />
+        <div class="form-error" id="register-password-confirm-error" aria-live="polite"></div>
+        <button type="submit" class="submit-btn">Daftar</button>
+      </form>
+      <p class="form-toggle">
+        Sudah punya akun? <button id="show-login" type="button">Masuk di sini</button>
       </p>
-    </form>
+    </div>
   </div>
 </div>
 
@@ -558,167 +523,175 @@
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const database = getDatabase(app);
-  const loginModal = document.getElementById('login-modal');
-  const registerModal = document.getElementById('register-modal');
+
+  const authModal = document.getElementById('auth-modal');
+  const closeBtn = authModal.querySelector('.close-btn');
+  const loginFormContainer = document.getElementById('login-form-container');
+  const registerFormContainer = document.getElementById('register-form-container');
+  const showRegisterBtn = document.getElementById('show-register');
+  const showLoginBtn = document.getElementById('show-login');
   const navLinks = document.querySelector('nav.nav-links');
+  const btnLoginOpen = document.getElementById('btn-login');
 
-  // Open and Close modals but make sure only one open at once
-  function openModal(modal) {
-    if (modal === loginModal) closeModal(registerModal);
-    else if (modal === registerModal) closeModal(loginModal);
-    modal.hidden = false;
-    modal.querySelector('input').focus();
+  // Modal open/close
+  function openModal() {
+    authModal.hidden = false;
+    loginFormContainer.hidden = false;
+    registerFormContainer.hidden = true;
     document.body.style.overflow = 'hidden';
+    loginFormContainer.querySelector('input').focus();
   }
-  function closeModal(modal) {
-    modal.hidden = true;
+  function closeModal() {
+    authModal.hidden = true;
     document.body.style.overflow = '';
-    clearFormErrors(modal);
-    modal.querySelector('form').reset();
+    clearFormErrors(loginForm);
+    clearFormErrors(registerForm);
+    loginForm.reset();
+    registerForm.reset();
   }
-
-  function clearFormErrors(modal) {
-    modal.querySelectorAll('.form-error').forEach(el => el.textContent = '');
-  }
-
-  function validateEmail(email) {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-  }
-
-  // Hook buttons (including links in modal forms) to open modals
-  function attachModalTriggers() {
-    const btnLoginOpen = document.getElementById('btn-login');
-    const btnRegisterOpen = document.getElementById('btn-register');
-    if (btnLoginOpen) btnLoginOpen.onclick = () => openModal(loginModal);
-    if (btnRegisterOpen) btnRegisterOpen.onclick = () => openModal(registerModal);
-    const linkRegister = document.getElementById('link-register');
-    if (linkRegister) linkRegister.onclick = () => { closeModal(loginModal); openModal(registerModal); };
-    const linkLogin = document.getElementById('link-login');
-    if (linkLogin) linkLogin.onclick = () => { closeModal(registerModal); openModal(loginModal); };
-  }
-
-  attachModalTriggers();
-
-  // Close modals on close button, backdrop click, or Esc key
-  [loginModal, registerModal].forEach(modal => {
-    modal.querySelector('.close-btn').onclick = () => closeModal(modal);
-    modal.onclick = (e) => { if(e.target===modal) closeModal(modal); };
-    modal.onkeydown = (e) => { if(e.key === 'Escape') closeModal(modal); };
+  btnLoginOpen.addEventListener('click', openModal);
+  closeBtn.addEventListener('click', closeModal);
+  authModal.addEventListener('click', e => {
+    if(e.target === authModal) closeModal();
+  });
+  authModal.addEventListener('keydown', e => {
+    if(e.key === 'Escape') closeModal();
   });
 
-  // Register form
-  const registerForm = document.getElementById('register-form');
-  registerForm.onsubmit = async e => {
+  // Toggle between login/register forms
+  showRegisterBtn.addEventListener('click', () => {
+    loginFormContainer.hidden = true;
+    registerFormContainer.hidden = false;
+    registerFormContainer.querySelector('input').focus();
+  });
+  showLoginBtn.addEventListener('click', () => {
+    registerFormContainer.hidden = true;
+    loginFormContainer.hidden = false;
+    loginFormContainer.querySelector('input').focus();
+  });
+
+  // Clear errors helper
+  function clearFormErrors(form) {
+    form.querySelectorAll('.form-error').forEach(el => el.textContent = '');
+  }
+
+  // Validate email format
+  function validateEmail(email) {
+    return /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email);
+  }
+
+  // Handle login form
+  const loginForm = document.getElementById('login-form');
+  loginForm.addEventListener('submit', async e => {
     e.preventDefault();
-    clearFormErrors(registerModal);
+    clearFormErrors(loginForm);
+    const email = loginForm.email.value.trim();
+    const password = loginForm.password.value;
+    let valid = true;
+    if(!email){
+      loginForm.querySelector('#login-email-error').textContent = "Email wajib diisi.";
+      valid = false;
+    } else if(!validateEmail(email)){
+      loginForm.querySelector('#login-email-error').textContent = "Format email tidak valid.";
+      valid = false;
+    }
+    if(!password){
+      loginForm.querySelector('#login-password-error').textContent = "Password wajib diisi.";
+      valid = false;
+    }
+    if(!valid) return;
+    try{
+      await signInWithEmailAndPassword(auth,email,password);
+      alert(`Selamat datang, ${email.split('@')[0]}!`);
+      closeModal();
+      updateLoginState();
+    }catch(error){
+      loginForm.querySelector('#login-password-error').textContent = error.message;
+    }
+  });
+
+  // Handle register form
+  const registerForm = document.getElementById('register-form');
+  registerForm.addEventListener('submit', async e => {
+    e.preventDefault();
+    clearFormErrors(registerForm);
     const email = registerForm.email.value.trim();
     const password = registerForm.password.value;
     const confirm = registerForm.passwordConfirm.value;
     let valid = true;
-    if (!email) {
-      document.getElementById('register-email-error').textContent = 'Email wajib diisi.';
+    if(!email){
+      registerForm.querySelector('#register-email-error').textContent = "Email wajib diisi.";
       valid = false;
-    } else if (!validateEmail(email)) {
-      document.getElementById('register-email-error').textContent = 'Format email tidak valid.';
-      valid = false;
-    }
-    if (password.length < 6) {
-      document.getElementById('register-password-error').textContent = 'Password minimal 6 karakter.';
+    } else if(!validateEmail(email)){
+      registerForm.querySelector('#register-email-error').textContent = "Format email tidak valid.";
       valid = false;
     }
-    if (confirm !== password) {
-      document.getElementById('register-password-confirm-error').textContent = 'Konfirmasi password tidak sama.';
+    if(password.length < 6){
+      registerForm.querySelector('#register-password-error').textContent = "Password minimal 6 karakter.";
       valid = false;
     }
-    if (!valid) return;
+    if(confirm !== password){
+      registerForm.querySelector('#register-password-confirm-error').textContent = "Konfirmasi password tidak sama.";
+      valid = false;
+    }
+    if(!valid) return;
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
-      alert('Registrasi berhasil. Silakan login.');
-      closeModal(registerModal);
-      openModal(loginModal);
-    } catch (error) {
-      document.getElementById('register-email-error').textContent = error.message;
+      await createUserWithEmailAndPassword(auth,email,password);
+      alert("Registrasi berhasil. Silakan login.");
+      registerForm.reset();
+      registerFormContainer.hidden = true;
+      loginFormContainer.hidden = false;
+      loginForm.querySelector('input').focus();
+    } catch(error) {
+      registerForm.querySelector('#register-email-error').textContent = error.message;
     }
-  };
+  });
 
-  // Login form
-  const loginForm = document.getElementById('login-form');
-  loginForm.onsubmit = async e => {
-    e.preventDefault();
-    clearFormErrors(loginModal);
-    const email = loginForm.email.value.trim();
-    const password = loginForm.password.value;
-    let valid = true;
-    if (!email) {
-      document.getElementById('login-email-error').textContent = 'Email wajib diisi.';
-      valid = false;
-    } else if (!validateEmail(email)) {
-      document.getElementById('login-email-error').textContent = 'Format email tidak valid.';
-      valid = false;
-    }
-    if (!password) {
-      document.getElementById('login-password-error').textContent = 'Password wajib diisi.';
-      valid = false;
-    }
-    if (!valid) return;
-    try {
-      await signInWithEmailAndPassword(auth, email, password);
-      alert(`Selamat datang, ${email.split('@')[0]}!`);
-      closeModal(loginModal);
-      updateLoginState();
-    } catch (error) {
-      document.getElementById('login-password-error').textContent = error.message;
-    }
-  };
-
-  // Logout
+  // Logout function and nav update
   function logout() {
     signOut(auth).then(() => {
       alert('Anda telah keluar.');
       location.reload();
-    }).catch(error => console.error(error));
+    }).catch(console.error);
   }
 
-  // Update navigation links depending on login state
   function updateLoginState() {
     const user = auth.currentUser;
-    if (user) {
-      const shortName = user.email.split('@')[0];
+    if(user){
+      const name = user.email.split('@')[0];
       navLinks.innerHTML = `
-        <span style="font-weight:600; color:#2563eb;">Halo, ${shortName}</span>
+        <span style="font-weight:600; color:#2563eb;">Halo, ${name}</span>
         <button id="btn-logout" type="button">Keluar</button>
       `;
       document.getElementById('btn-logout').onclick = logout;
     } else {
       navLinks.innerHTML = `
-        <button id="btn-login" type="button" aria-haspopup="dialog" aria-controls="login-modal">Login</button>
-        <button id="btn-register" type="button" aria-haspopup="dialog" aria-controls="register-modal">Register</button>
+        <button id="btn-login" type="button" aria-haspopup="dialog" aria-controls="auth-modal">Masuk</button>
       `;
-      attachModalTriggers();
+      document.getElementById('btn-login').onclick = openModal;
     }
   }
   onAuthStateChanged(auth, updateLoginState);
 
   // Tab navigation
-  const tabs = document.querySelectorAll('.tab-btn');
-  const tabPanels = document.querySelectorAll('.tab-panel');
-  tabPanels.forEach(panel => panel.setAttribute('aria-hidden', 'true'));
-  tabPanels[0].setAttribute('aria-hidden', 'false');
-
+  const tabs = document.querySelectorAll(".tab-btn");
+  const tabPanels = document.querySelectorAll(".tab-panel");
+  tabPanels.forEach(panel => panel.setAttribute("aria-hidden", "true"));
+  tabPanels[0].setAttribute("aria-hidden", "false");
   tabs.forEach(tab => {
     tab.onclick = () => {
       tabs.forEach(t => {
-        t.setAttribute('aria-selected', 'false');
-        t.setAttribute('tabindex', '-1');
+        t.setAttribute("aria-selected", "false");
+        t.setAttribute("tabindex", "-1");
       });
-      tabPanels.forEach(p => p.setAttribute('aria-hidden', 'true'));
-      tab.setAttribute('aria-selected', 'true');
-      tab.setAttribute('tabindex', '0');
-      document.getElementById(tab.getAttribute('aria-controls')).setAttribute('aria-hidden', 'false');
+      tabPanels.forEach(p => p.setAttribute("aria-hidden", "true"));
+      tab.setAttribute("aria-selected", "true");
+      tab.setAttribute("tabindex", "0");
+      document.getElementById(tab.getAttribute("aria-controls")).setAttribute("aria-hidden", "false");
     };
   });
 
-  // Quiz class and setup function (same as before)
+  // Quiz and leaderboard code unchanged
   const quizData = {
     matematika: [
       { question: "Berapa hasil dari 5 + 7?", answers: ["10", "12", "13", "11"], correct: 1 },
@@ -824,7 +797,7 @@
       if (hasNext) {
         displayQuestion();
       } else {
-        alert(\`Quiz selesai! Skor Anda: \${quiz.score} dari \${quiz.questions.length}\`);
+        alert(`Quiz selesai! Skor Anda: ${quiz.score} dari ${quiz.questions.length}`);
         saveResult(quiz.topic, auth.currentUser, quiz.score);
         nextBtn.disabled = true;
         renderLeaderboard();
@@ -872,9 +845,9 @@
       const top = entries.slice(0, 50);
       top.forEach((entry,i) => {
         const tr = document.createElement('tr');
-        tr.innerHTML = \`
-          <td>\${i+1}</td><td>\${entry.name}</td><td>\${entry.topic}</td><td>\${entry.score}</td><td>\${entry.date}</td>
-        \`;
+        tr.innerHTML = `
+          <td>${i+1}</td><td>${entry.name}</td><td>${entry.topic}</td><td>${entry.score}</td><td>${entry.date}</td>
+        `;
         tbody.appendChild(tr);
       });
     }, { onlyOnce: true });
