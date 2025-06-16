@@ -306,7 +306,6 @@
     margin-top: 16px;
     color: #374151;
   }
-  .modal input[type="text"],
   .modal input[type="email"],
   .modal input[type="password"] {
     width: 100%;
@@ -317,7 +316,6 @@
     font-family: inherit;
     transition: border-color 0.3s ease;
   }
-  .modal input[type="text"]:focus,
   .modal input[type="email"]:focus,
   .modal input[type="password"]:focus {
     outline: none;
@@ -504,6 +502,11 @@
       <div class="form-error" id="login-password-error" aria-live="polite"></div>
 
       <button type="submit" class="submit-btn">Masuk</button>
+
+      <p style="margin-top:16px; text-align:center; font-size:14px;">
+        Belum punya akun?
+        <button type="button" id="link-register" style="background:none; border:none; color:#2563eb; cursor:pointer; font-weight:600;">Daftar di sini</button>
+      </p>
     </form>
   </div>
 </div>
@@ -527,6 +530,11 @@
       <div class="form-error" id="register-password-confirm-error" aria-live="polite"></div>
 
       <button type="submit" class="submit-btn">Daftar</button>
+
+      <p style="margin-top:16px; text-align:center; font-size:14px;">
+        Sudah punya akun?
+        <button type="button" id="link-login" style="background:none; border:none; color:#2563eb; cursor:pointer; font-weight:600;">Masuk di sini</button>
+      </p>
     </form>
   </div>
 </div>
@@ -583,6 +591,22 @@
     if (btnRegisterOpen) {
       btnRegisterOpen.addEventListener('click', () => openModal(registerModal));
     }
+
+    // Attach switch modal links inside forms
+    const linkRegister = document.getElementById('link-register');
+    if (linkRegister) {
+      linkRegister.addEventListener('click', () => {
+        closeModal(loginModal);
+        openModal(registerModal);
+      });
+    }
+    const linkLogin = document.getElementById('link-login');
+    if (linkLogin) {
+      linkLogin.addEventListener('click', () => {
+        closeModal(registerModal);
+        openModal(loginModal);
+      });
+    }
   }
 
   attachOpenModalEvents();
@@ -637,6 +661,7 @@
       await createUserWithEmailAndPassword(auth, email, password);
       alert('Registrasi berhasil. Silakan login.');
       closeModal(registerModal);
+      openModal(loginModal);
     } catch (error) {
       document.getElementById('register-email-error').textContent = error.message;
     }
@@ -725,7 +750,7 @@
     });
   });
 
-  // Quiz data and class (unchanged)
+  // Quiz data
   const quizData = {
     matematika: [
       { question: "Berapa hasil dari 5 + 7?", answers: ["10", "12", "13", "11"], correct: 1 },
@@ -901,9 +926,7 @@
 
   // Initial leaderboard render
   renderLeaderboard();
-
 </script>
 
 </body>
 </html>
-
