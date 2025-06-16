@@ -558,18 +558,14 @@
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const database = getDatabase(app);
-
-  // Modal elements
   const loginModal = document.getElementById('login-modal');
   const registerModal = document.getElementById('register-modal');
   const navLinks = document.querySelector('nav.nav-links');
 
-  // Open and Close modal functions
+  // Open and Close modals but make sure only one open at once
   function openModal(modal) {
-    // Close other modal if open
     if (modal === loginModal) closeModal(registerModal);
     else if (modal === registerModal) closeModal(loginModal);
-
     modal.hidden = false;
     modal.querySelector('input').focus();
     document.body.style.overflow = 'hidden';
@@ -581,59 +577,38 @@
     modal.querySelector('form').reset();
   }
 
-  // Attach open modal event listeners on nav buttons (initial)
-  function attachOpenModalEvents() {
-    const btnLoginOpen = document.getElementById('btn-login');
-    const btnRegisterOpen = document.getElementById('btn-register');
-    if (btnLoginOpen) {
-      btnLoginOpen.addEventListener('click', () => openModal(loginModal));
-    }
-    if (btnRegisterOpen) {
-      btnRegisterOpen.addEventListener('click', () => openModal(registerModal));
-    }
-
-    // Attach switch modal links inside forms
-    const linkRegister = document.getElementById('link-register');
-    if (linkRegister) {
-      linkRegister.addEventListener('click', () => {
-        closeModal(loginModal);
-        openModal(registerModal);
-      });
-    }
-    const linkLogin = document.getElementById('link-login');
-    if (linkLogin) {
-      linkLogin.addEventListener('click', () => {
-        closeModal(registerModal);
-        openModal(loginModal);
-      });
-    }
-  }
-
-  attachOpenModalEvents();
-
-  [loginModal, registerModal].forEach(modal => {
-    modal.querySelector('.close-btn').addEventListener('click', () => closeModal(modal));
-    modal.addEventListener('click', e => {
-      if (e.target === modal) closeModal(modal);
-    });
-    modal.addEventListener('keydown', e => {
-      if (e.key === 'Escape') closeModal(modal);
-    });
-  });
-
-  // Clear form errors
   function clearFormErrors(modal) {
     modal.querySelectorAll('.form-error').forEach(el => el.textContent = '');
   }
 
-  // Email validation helper
   function validateEmail(email) {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   }
 
-  // Register form submission
+  // Hook buttons (including links in modal forms) to open modals
+  function attachModalTriggers() {
+    const btnLoginOpen = document.getElementById('btn-login');
+    const btnRegisterOpen = document.getElementById('btn-register');
+    if (btnLoginOpen) btnLoginOpen.onclick = () => openModal(loginModal);
+    if (btnRegisterOpen) btnRegisterOpen.onclick = () => openModal(registerModal);
+    const linkRegister = document.getElementById('link-register');
+    if (linkRegister) linkRegister.onclick = () => { closeModal(loginModal); openModal(registerModal); };
+    const linkLogin = document.getElementById('link-login');
+    if (linkLogin) linkLogin.onclick = () => { closeModal(registerModal); openModal(loginModal); };
+  }
+
+  attachModalTriggers();
+
+  // Close modals on close button, backdrop click, or Esc key
+  [loginModal, registerModal].forEach(modal => {
+    modal.querySelector('.close-btn').onclick = () => closeModal(modal);
+    modal.onclick = (e) => { if(e.target===modal) closeModal(modal); };
+    modal.onkeydown = (e) => { if(e.key === 'Escape') closeModal(modal); };
+  });
+
+  // Register form
   const registerForm = document.getElementById('register-form');
-  registerForm.addEventListener('submit', async e => {
+  registerForm.onsubmit = async e => {
     e.preventDefault();
     clearFormErrors(registerModal);
     const email = registerForm.email.value.trim();
@@ -656,7 +631,6 @@
       valid = false;
     }
     if (!valid) return;
-
     try {
       await createUserWithEmailAndPassword(auth, email, password);
       alert('Registrasi berhasil. Silakan login.');
@@ -665,11 +639,11 @@
     } catch (error) {
       document.getElementById('register-email-error').textContent = error.message;
     }
-  });
+  };
 
-  // Login form submission
+  // Login form
   const loginForm = document.getElementById('login-form');
-  loginForm.addEventListener('submit', async e => {
+  loginForm.onsubmit = async e => {
     e.preventDefault();
     clearFormErrors(loginModal);
     const email = loginForm.email.value.trim();
@@ -687,7 +661,6 @@
       valid = false;
     }
     if (!valid) return;
-
     try {
       await signInWithEmailAndPassword(auth, email, password);
       alert(`Selamat datang, ${email.split('@')[0]}!`);
@@ -696,49 +669,44 @@
     } catch (error) {
       document.getElementById('login-password-error').textContent = error.message;
     }
-  });
+  };
 
   // Logout
   function logout() {
     signOut(auth).then(() => {
       alert('Anda telah keluar.');
       location.reload();
-    }).catch(error => {
-      console.error('Logout error', error);
-    });
+    }).catch(error => console.error(error));
   }
 
-  // Update navigation based on auth state
+  // Update navigation links depending on login state
   function updateLoginState() {
     const user = auth.currentUser;
     if (user) {
-      const emailName = user.email.split('@')[0];
+      const shortName = user.email.split('@')[0];
       navLinks.innerHTML = `
-        <span style="font-weight:600; color:#2563eb;">Halo, ${emailName}</span>
+        <span style="font-weight:600; color:#2563eb;">Halo, ${shortName}</span>
         <button id="btn-logout" type="button">Keluar</button>
       `;
-      document.getElementById('btn-logout').addEventListener('click', logout);
+      document.getElementById('btn-logout').onclick = logout;
     } else {
       navLinks.innerHTML = `
         <button id="btn-login" type="button" aria-haspopup="dialog" aria-controls="login-modal">Login</button>
         <button id="btn-register" type="button" aria-haspopup="dialog" aria-controls="register-modal">Register</button>
       `;
-      attachOpenModalEvents();
+      attachModalTriggers();
     }
   }
+  onAuthStateChanged(auth, updateLoginState);
 
-  onAuthStateChanged(auth, () => {
-    updateLoginState();
-  });
-
-  // Tab functionality
+  // Tab navigation
   const tabs = document.querySelectorAll('.tab-btn');
   const tabPanels = document.querySelectorAll('.tab-panel');
   tabPanels.forEach(panel => panel.setAttribute('aria-hidden', 'true'));
   tabPanels[0].setAttribute('aria-hidden', 'false');
 
   tabs.forEach(tab => {
-    tab.addEventListener('click', () => {
+    tab.onclick = () => {
       tabs.forEach(t => {
         t.setAttribute('aria-selected', 'false');
         t.setAttribute('tabindex', '-1');
@@ -747,10 +715,10 @@
       tab.setAttribute('aria-selected', 'true');
       tab.setAttribute('tabindex', '0');
       document.getElementById(tab.getAttribute('aria-controls')).setAttribute('aria-hidden', 'false');
-    });
+    };
   });
 
-  // Quiz data
+  // Quiz class and setup function (same as before)
   const quizData = {
     matematika: [
       { question: "Berapa hasil dari 5 + 7?", answers: ["10", "12", "13", "11"], correct: 1 },
@@ -782,9 +750,7 @@
       this.currentIndex = 0;
       this.score = 0;
     }
-    getCurrentQuestion() {
-      return this.questions[this.currentIndex];
-    }
+    getCurrentQuestion() { return this.questions[this.currentIndex]; }
     answer(index) {
       const currentQ = this.getCurrentQuestion();
       if (index === currentQ.correct) {
@@ -808,7 +774,7 @@
     btn.type = 'button';
     btn.className = 'answer-btn';
     btn.textContent = text;
-    btn.addEventListener('click', () => onClick(index, btn));
+    btn.onclick = () => onClick(index, btn);
     return btn;
   }
 
@@ -841,8 +807,7 @@
           if (isCorrect) btnEl.classList.add('correct');
           else {
             btnEl.classList.add('incorrect');
-            const correctBtn = answersList.children[q.correct];
-            correctBtn.classList.add('correct');
+            answersList.children[q.correct].classList.add('correct');
           }
           nextBtn.disabled = false;
         });
@@ -854,12 +819,12 @@
       selectedAnswer = null;
     }
 
-    nextBtn.addEventListener('click', () => {
+    nextBtn.onclick = () => {
       const hasNext = quiz.next();
       if (hasNext) {
         displayQuestion();
       } else {
-        alert(`Quiz selesai! Skor Anda: ${quiz.score} dari ${quiz.questions.length}`);
+        alert(\`Quiz selesai! Skor Anda: \${quiz.score} dari \${quiz.questions.length}\`);
         saveResult(quiz.topic, auth.currentUser, quiz.score);
         nextBtn.disabled = true;
         renderLeaderboard();
@@ -867,7 +832,7 @@
         displayQuestion();
         activateTab('tab-leaderboard');
       }
-    });
+    };
 
     displayQuestion();
     return quiz;
@@ -907,9 +872,9 @@
       const top = entries.slice(0, 50);
       top.forEach((entry,i) => {
         const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td>${i+1}</td><td>${entry.name}</td><td>${entry.topic}</td><td>${entry.score}</td><td>${entry.date}</td>
-        `;
+        tr.innerHTML = \`
+          <td>\${i+1}</td><td>\${entry.name}</td><td>\${entry.topic}</td><td>\${entry.score}</td><td>\${entry.date}</td>
+        \`;
         tbody.appendChild(tr);
       });
     }, { onlyOnce: true });
@@ -924,7 +889,6 @@
   const scienceQuiz = setupQuizUI('sain', 'science-question-container', 'science-quiz-progress', 'science-next-btn');
   const languageQuiz = setupQuizUI('bahasa', 'language-question-container', 'language-quiz-progress', 'language-next-btn');
 
-  // Initial leaderboard render
   renderLeaderboard();
 </script>
 
