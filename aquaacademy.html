@@ -243,7 +243,7 @@
         // Elements
         const auth = firebase.auth();
         const db = firebase.database();
-        let currentUser  = null;
+        let currentUser   = null;
 
         function showPage(pageId) {
             document.querySelectorAll('#dashboard .container').forEach(el => el.classList.remove('active'));
@@ -328,8 +328,8 @@
             if (user) {
                 showLoading();
                 db.ref('users/' + user.uid).once('value').then(snapshot => {
-                    currentUser  = snapshot.val();
-                    currentUser .uid = user.uid;
+                    currentUser   = snapshot.val();
+                    currentUser  .uid = user.uid;
                     loadProfile();
                     loadQuestions();
                     loadLeaderboards();
@@ -343,24 +343,24 @@
         // Load Profile
         function loadProfile() {
             document.getElementById('profileInfo').innerHTML = `
-                <p>Name: ${currentUser .name}</p>
-                <p>Email: ${currentUser .email}</p>
-                <p>Education Level: ${currentUser .education_level}</p>
+                <p>Name: ${currentUser  .name}</p>
+                <p>Email: ${currentUser  .email}</p>
+                <p>Education Level: ${currentUser  .education_level}</p>
                 <p>Points:
-                    Physics: ${currentUser .points.physics || 0},
-                    Chemistry: ${currentUser .points.chemistry || 0},
-                    Biology: ${currentUser .points.biology || 0},
-                    Indonesian: ${currentUser .points.indonesian || 0},
-                    English: ${currentUser .points.english || 0},
-                    Math: ${currentUser .points.math || 0}
+                    Physics: ${currentUser  .points.physics || 0},
+                    Chemistry: ${currentUser  .points.chemistry || 0},
+                    Biology: ${currentUser  .points.biology || 0},
+                    Indonesian: ${currentUser  .points.indonesian || 0},
+                    English: ${currentUser  .points.english || 0},
+                    Math: ${currentUser  .points.math || 0}
                 </p>
-                <p>Total Score: ${currentUser .total_score}</p>
+                <p>Total Score: ${currentUser  .total_score}</p>
             `;
         }
 
         // Load Questions
         function loadQuestions() {
-            const education = currentUser .education_level;
+            const education = currentUser  .education_level;
             const questionsContainer = document.getElementById('questionsContainer');
             questionsContainer.innerHTML = '';
             const subjects = questions[education];
@@ -382,8 +382,8 @@
                     const selected = e.target.textContent.trim();
                     if (selected === correctAnswer) {
                         alert("Correct!");
-                        db.ref(`users/${currentUser .uid}/points/${subject}`).transaction(val => (val || 0) + 1);
-                        db.ref(`users/${currentUser .uid}/total_score`).transaction(val => (val || 0) + 1);
+                        db.ref(`users/${currentUser  .uid}/points/${subject}`).transaction(val => (val || 0) + 1);
+                        db.ref(`users/${currentUser  .uid}/total_score`).transaction(val => (val || 0) + 1);
                     } else {
                         alert("Wrong Answer.");
                     }
@@ -434,7 +434,7 @@
             const newPass = prompt("Enter new password:");
             if(newPass) {
                 try {
-                    await auth.currentUser .updatePassword(newPass);
+                    await auth.currentUser  .updatePassword(newPass);
                     alert("Password updated!");
                 } catch(error) {
                     alert(error.message);
