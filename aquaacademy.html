@@ -243,7 +243,7 @@
         // Elements
         const auth = firebase.auth();
         const db = firebase.database();
-        let currentUser   = null;
+        let currentUser    = null;
 
         function showPage(pageId) {
             document.querySelectorAll('#dashboard .container').forEach(el => el.classList.remove('active'));
@@ -328,7 +328,7 @@
             if (user) {
                 showLoading();
                 db.ref('users/' + user.uid).once('value').then(snapshot => {
-                    currentUser   = snapshot.val();
+                    currentUser    = snapshot.val();
                     currentUser  .uid = user.uid;
                     loadProfile();
                     loadQuestions();
