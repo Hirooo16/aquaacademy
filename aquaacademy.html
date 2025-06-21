@@ -46,6 +46,19 @@ header {
   box-shadow: 0 4px 10px rgba(0,0,0,0.4);
   animation: slideDown 0.6s ease-out;
 }
+
+/* NAVBAR + TOGGLE */
+.nav-toggle {
+  display: none;
+  background-color: rgba(0, 77, 64, 0.95);
+  color: #ffcc80;
+  font-size: 1.8em;
+  padding: 10px 20px;
+  cursor: pointer;
+  text-align: right;
+  z-index: 2;
+}
+
 nav {
   background: rgba(0,77,64,.95);
   color:#e0f7fa;
@@ -55,7 +68,7 @@ nav {
   flex-wrap: wrap;
   box-shadow:0 2px 5px rgba(0,0,0,.3);
   z-index:1;
-  animation: fadeIn 1s ease-in;
+  transition: max-height 0.4s ease;
 }
 nav button {
   background:transparent;
@@ -235,37 +248,53 @@ footer {
     RESPONSIVE STYLES
 ========================== */
 @media (max-width: 768px) {
+  .nav-toggle {
+    display: block;
+  }
+
   nav {
     flex-direction: column;
-    align-items: center;
-    padding: 10px;
+    align-items: stretch;
+    max-height: 0;
+    overflow: hidden;
   }
+
+  nav.show {
+    max-height: 300px;
+  }
+
   nav button {
     width: 100%;
-    margin: 5px 0;
+    margin: 8px 0;
     font-size: 1em;
   }
+
   .container {
     margin: 10px;
     padding: 15px;
     font-size: 0.95em;
   }
+
   header {
     font-size: 1.2em;
     padding: 15px;
   }
+
   input, select, button {
     font-size: 1em;
   }
+
   .leaderboard-subject table th,
   .leaderboard-subject table td {
     font-size: 0.9em;
     padding: 8px 10px;
   }
+
   .leaderboard-subject h3,
   .leaderboard-subject h4 {
     font-size: 1.05em;
   }
+
   footer {
     font-size: 0.85em;
     padding: 8px;
@@ -312,6 +341,9 @@ footer {
 
 <!-- Main Dashboard -->
 <div id="dashboard" class="container">
+    <!-- Tombol Hamburger - tampil hanya di HP -->
+    <div class="nav-toggle" onclick="toggleNav()">☰</div>
+    <!-- Navbar -->
     <nav>
         <button data-page="profilePage">Profile</button>
         <button data-page="materialsPage">Materials</button>
@@ -320,6 +352,8 @@ footer {
         <button id="logoutButton">Quit</button>
         <button id="toggleDarkMode">Toggle Dark Mode</button>
     </nav>
+
+</div>
     <div id="profilePage" class="container active">
         <h3>Profile</h3>
         <div id="profileInfo"></div>
@@ -1453,6 +1487,11 @@ document.getElementById('showLoginLink').addEventListener('click', e => {
     e.preventDefault();
     showContainer('loginScreen');
 });
+
+  function toggleNav() {
+    const nav = document.querySelector('nav');
+    nav.classList.toggle('show');
+  }
 </script>
 <footer><p>&copy; 2023 Atlantis Academy. All rights reserved.</p></footer>
 </body>
