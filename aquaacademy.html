@@ -1086,9 +1086,22 @@ function showContainer(containerId) {
 }
 
 function showPage(pageId) {
+    // Menyembunyikan semua kontainer di dalam dashboard
     document.querySelectorAll('#dashboard .container').forEach(el => el.classList.remove('active'));
-    document.getElementById(pageId).classList.add('active');
+    
+    // Menampilkan kontainer yang sesuai dengan ID yang diberikan
+    const selectedPage = document.getElementById(pageId);
+    if (selectedPage) {
+        selectedPage.classList.add('active');
+    }
 }
+
+// Menambahkan event listener untuk setiap tombol di navbar
+document.querySelectorAll('nav button[data-page]').forEach(button => {
+    button.addEventListener('click', e => {
+        showPage(button.getAttribute('data-page'));
+    });
+});
 
 function showLoading() { document.getElementById('loadingSpinner').style.display = 'block'; }
 function hideLoading() { document.getElementById('loadingSpinner').style.display = 'none'; }
