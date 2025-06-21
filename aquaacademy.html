@@ -1256,8 +1256,8 @@ function loadLeaderboards() {
     leaderboardDiv.innerHTML = '';
     db.ref('users').once('value').then(snapshot => {
         const data = snapshot.val();
-        const subjects = ["physics","chemistry","biology","indonesian","english","math"];
-        
+        const subjects = ["physics", "chemistry", "biology", "indonesian", "english", "math"];
+
         subjects.forEach(sub => {
             let scores = [];
             for (let uid in data) {
@@ -1266,21 +1266,29 @@ function loadLeaderboards() {
                 scores.push({ name: user.name, score });
             }
             scores.sort((a, b) => b.score - a.score);
-            
-            let tableRows = scores.slice(0, 10).map((user, index) =>
-                <tr><td>${index + 1}</td><td>${user.name}</td><td>${user.score}</td></tr>).join('');
 
-            leaderboardDiv.innerHTML += 
+            let tableRows = scores.slice(0, 10).map((user, index) => `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td>${user.name}</td>
+                    <td>${user.score}</td>
+                </tr>
+            `).join('');
+
+            leaderboardDiv.innerHTML += `
                 <div class="leaderboard-subject">
                     <h4>${sub.toUpperCase()} Leaderboard (Top 10)</h4>
                     <table>
-                        <thead><tr><th>Rank</th><th>Name</th><th>Score</th></tr></thead>
+                        <thead>
+                            <tr><th>Rank</th><th>Name</th><th>Score</th></tr>
+                        </thead>
                         <tbody>${tableRows}</tbody>
                     </table>
-                </div>;
+                </div>
+            `;
         });
 
-        // Leaderboard Keseluruhan
+        // Leaderboard keseluruhan
         let overall = [];
         for (let uid in data) {
             const user = data[uid];
@@ -1289,19 +1297,28 @@ function loadLeaderboards() {
         }
         overall.sort((a, b) => b.score - a.score);
 
-        let overallRows = overall.slice(0, 10).map((user, index) =>
-            <tr><td>${index + 1}</td><td>${user.name}</td><td>${user.score}</td></tr>).join('');
+        let overallRows = overall.slice(0, 10).map((user, index) => `
+            <tr>
+                <td>${index + 1}</td>
+                <td>${user.name}</td>
+                <td>${user.score}</td>
+            </tr>
+        `).join('');
 
-        leaderboardDiv.innerHTML += 
+        leaderboardDiv.innerHTML += `
             <div class="leaderboard-subject">
                 <h3>Overall Leaderboard (Top 10)</h3>
                 <table>
-                    <thead><tr><th>Rank</th><th>Name</th><th>Score</th></tr></thead>
+                    <thead>
+                        <tr><th>Rank</th><th>Name</th><th>Score</th></tr>
+                    </thead>
                     <tbody>${overallRows}</tbody>
                 </table>
-            </div>;
+            </div>
+        `;
     });
 }
+
 
 // =================== LOGIKA TOMBOL ===================
 document.querySelectorAll('nav button[data-page]').forEach(button => {
