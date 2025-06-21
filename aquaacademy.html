@@ -1,814 +1,230 @@
 <!DOCTYPE html>
-<html lang="id">
+<html>
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
-<title>Aqua Academy - Platform Pendidikan</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=Material+Icons" rel="stylesheet" />
+<meta charset="UTF-8">
+<title>Aqua Academy</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 <style>
-  /* Reset dan dasar */
-  * {
-    margin: 0; padding: 0; box-sizing: border-box;
-  }
-  html {
-    scroll-behavior: smooth;
-  }
-  body {
-    font-family: 'Inter', sans-serif;
-    background: #f9fafb;
-    color: #374151;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-  }
-  a {
-    color: inherit;
-    text-decoration: none;
-  }
-  button {
-    font-family: inherit;
-    cursor: pointer;
-    border: none;
-    background: none;
-  }
-  /* Kontainer */
-  .container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 24px;
-    width: 100%;
-  }
-
-  /* HEADER */
-  header {
-    position: sticky;
-    top: 0;
-    background: #ffffffcc;
-    backdrop-filter: saturate(180%) blur(10px);
-    box-shadow: 0 2px 6px rgb(0 0 0 / 0.06);
-    z-index: 1000;
-  }
-  .header-inner {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 16px 24px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  .logo {
-    font-weight: 700;
-    font-size: 28px;
-    background: linear-gradient(135deg, #06b6d4, #818cf8);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
-  nav.nav-links {
-    display: flex;
-    gap: 24px;
-    align-items: center;
-  }
-  nav.nav-links button, nav.nav-links a {
-    font-weight: 600;
-    font-size: 16px;
-    color: #374151;
-    padding: 8px 12px;
-    border-radius: 12px;
-    transition: background-color 0.25s ease, color 0.25s ease;
-  }
-  nav.nav-links button:hover,
-  nav.nav-links a:hover {
-    background: #06b6d4;
-    color: white;
-  }
-
-  /* MAIN CONTENT */
-  main {
-    flex-grow: 1;
-    padding: 40px 24px 80px;
-  }
-
-  /* Tabs */
-  .tabs {
-    display: flex;
-    gap: 32px;
-    border-bottom: 2px solid #e0e7ff;
-    margin-bottom: 40px;
-    overflow-x: auto;
-  }
-  .tab-btn {
-    font-size: 18px;
-    font-weight: 700;
-    padding: 12px 0;
-    cursor: pointer;
-    color: #6b7280;
-    border-bottom: 3px solid transparent;
-    transition: color 0.3s ease, border-color 0.3s ease;
-    flex-shrink: 0;
-  }
-  .tab-btn[aria-selected="true"] {
-    color: #2563eb;
-    border-color: #2563eb;
-  }
-  .tab-btn:hover:not([aria-selected="true"]) {
-    color: #2563eb;
-  }
-
-  /* Panels */
-  section.tab-panel {
-    display: none;
-  }
-  section.tab-panel[aria-hidden="false"] {
-    display: block;
-  }
-
-  /* Konten pembelajaran */
-  .edu-card {
-    background: white;
-    border-radius: 16px;
-    padding: 32px;
-    box-shadow: 0 8px 20px rgb(0 0 0 / 0.05);
-    margin-bottom: 48px;
-    max-width: 800px;
-    margin-left: auto;
-    margin-right: auto;
-  }
-  .edu-card h2 {
-    font-size: 28px;
-    font-weight: 700;
-    margin-bottom: 16px;
-    color: #1e40af;
-  }
-  .edu-card p {
-    font-size: 16px;
-    line-height: 1.6;
-    color: #4b5563;
-  }
-
-  /* Quiz */
-  .quiz-container {
-    max-width: 800px;
-    margin-left: auto;
-    margin-right: auto;
-    background: #fefefe;
-    border-radius: 16px;
-    box-shadow: 0 8px 20px rgb(0 0 0 / 0.07);
-    padding: 24px;
-  }
-  .quiz-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 24px;
-  }
-  .quiz-title {
-    font-weight: 700;
-    font-size: 24px;
-    color: #2563eb;
-  }
-  .quiz-progress {
-    font-weight: 600;
-    color: #4b5563;
-  }
-  .question {
-    font-size: 20px;
-    font-weight: 600;
-    margin-bottom: 16px;
-    color: #1e40af;
-  }
-  .answers-list {
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-    margin-bottom: 24px;
-  }
-  .answer-btn {
-    background: #e0e7ff;
-    border-radius: 12px;
-    padding: 16px;
-    font-size: 16px;
-    font-weight: 600;
-    color: #374151;
-    box-shadow: 0 2px 8px rgb(0 0 0 / 0.1);
-    cursor: pointer;
-    user-select: none;
-    transition: background-color 0.3s ease, box-shadow 0.3s ease;
-  }
-  .answer-btn:hover:not(:disabled) {
-    background: #2563eb;
-    color: white;
-    box-shadow: 0 6px 14px rgb(37 99 235 / 0.5);
-  }
-  .answer-btn:disabled {
-    cursor: default;
-    opacity: 0.75;
-  }
-  .answer-btn.correct {
-    background: #22c55e !important;
-    color: white !important;
-    box-shadow: 0 6px 16px rgb(34 197 94 / 0.6) !important;
-  }
-  .answer-btn.incorrect {
-    background: #ef4444 !important;
-    color: white !important;
-    box-shadow: 0 6px 16px rgb(239 68 68 / 0.6) !important;
-  }
-  .quiz-controls {
-    display: flex;
-    justify-content: flex-end;
-  }
-  .btn-next {
-    background: #2563eb;
-    color: white;
-    padding: 14px 28px;
-    font-weight: 700;
-    font-size: 16px;
-    border-radius: 12px;
-    box-shadow: 0 6px 14px rgb(37 99 235 / 0.5);
-    transition: background-color 0.3s ease;
-  }
-  .btn-next:disabled {
-    background: #93c5fd;
-    cursor: default;
-    box-shadow: none;
-  }
-  .btn-next:hover:not(:disabled) {
-    background: #1d4ed8;
-  }
-
-  /* Leaderboard */
-  .leaderboard-container {
-    max-width: 800px;
-    margin-left: auto;
-    margin-right: auto;
-    background: white;
-    border-radius: 16px;
-    box-shadow: 0 8px 20px rgb(0 0 0 / 0.06);
-    padding: 24px;
-  }
-  .leaderboard-title {
-    font-size: 28px;
-    font-weight: 700;
-    color: #2563eb;
-    margin-bottom: 24px;
-    text-align: center;
-  }
-  table.leaderboard-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 16px;
-  }
-  table.leaderboard-table th,
-  table.leaderboard-table td {
-    padding: 12px 16px;
-    text-align: left;
-    border-bottom: 1px solid #e5e7eb;
-  }
-  table.leaderboard-table th {
-    background: #e0e7ff;
-    color: #1e40af;
-  }
-  table.leaderboard-table tbody tr:hover {
-    background: #f0f9ff;
-  }
-
-  /* Modal backdrop */
-  .modal-backdrop {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.45);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1200;
-  }
-  /* Modal */
-  .modal {
-    background: white;
-    border-radius: 16px;
-    padding: 32px 36px;
-    width: 400px;
-    max-width: 90vw;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
-    position: relative;
-  }
-  .modal h2 {
-    margin-bottom: 24px;
-    color: #1e40af;
-    font-weight: 700;
-    font-size: 24px;
-    text-align: center;
-  }
-  .modal label {
-    display: block;
-    font-weight: 600;
-    margin-bottom: 6px;
-    margin-top: 16px;
-    color: #374151;
-  }
-  .modal input[type="email"],
-  .modal input[type="password"] {
-    width: 100%;
-    padding: 12px 14px;
-    border-radius: 12px;
-    border: 1.5px solid #d1d5db;
-    font-size: 16px;
-    font-family: inherit;
-    transition: border-color 0.3s ease;
-  }
-  .modal input[type="email"]:focus,
-  .modal input[type="password"]:focus {
-    outline: none;
-    border-color: #2563eb;
-    box-shadow: 0 0 8px rgba(37, 99, 235, 0.5);
-  }
-  .modal .form-error {
-    color: #ef4444;
-    font-size: 14px;
-    margin-top: 6px;
-  }
-  .modal button.submit-btn {
-    margin-top: 24px;
-    background: #2563eb;
-    color: white;
-    font-weight: 700;
-    font-size: 16px;
-    padding: 14px 0;
-    width: 100%;
-    border-radius: 12px;
-    box-shadow: 0 6px 14px rgba(37, 99, 235, 0.5);
-    transition: background-color 0.3s ease;
-  }
-  .modal button.submit-btn:hover {
-    background: #1d4ed8;
-  }
-  .modal .close-btn {
-    position: absolute;
-    top: 14px;
-    right: 20px;
-    font-size: 28px;
-    color: #6b7280;
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-weight: 700;
-    line-height: 1;
-    transition: color 0.3s ease;
-  }
-  .modal .close-btn:hover {
-    color: #2563eb;
-  }
-
-  /* Form toggle links */
-  .form-toggle {
-    margin-top: 20px;
-    text-align: center;
-    font-size: 14px;
-  }
-  .form-toggle button {
-    background: none;
-    border: none;
-    color: #2563eb;
-    cursor: pointer;
-    font-weight: 600;
-    padding: 0;
-  }
-
-  /* Responsive */
-  @media (max-width: 640px) {
-    header .header-inner {
-      flex-direction: column;
-      gap: 16px;
-    }
-    nav.nav-links {
-      gap: 12px;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-    main {
-      padding: 32px 16px 64px;
-    }
-    .quiz-container, .leaderboard-container, .edu-card {
-      padding: 20px;
-    }
-    .edu-card {
-      padding: 24px;
-    }
-  }
+.gradient-bg {
+  background: linear-gradient(135deg, #00b4db, #0083b0);
+}
+.card-hover {
+  transition: all 0.3s ease;
+}
+.card-hover:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0,0,0,.1);
+}
+.tab-content { display: none; }
+.tab-content.active { display: block; animation: fadeIn .5s; }
+@keyframes fadeIn {
+  from { opacity:0 } to { opacity:1 }
+}
 </style>
-<body>
+</head>
+<body class="font-sans bg-gray-50">
 
-<header role="banner">
-  <div class="header-inner container">
-    <a href="#" class="logo" aria-label="Aqua Academy Home">Aqua Academy</a>
-    <nav class="nav-links" role="navigation" aria-label="Primary Navigation">
-      <button id="btn-login" type="button" aria-haspopup="dialog" aria-controls="auth-modal">Masuk</button>
-    </nav>
-  </div>
-</header>
-
-<main role="main" class="container" tabindex="-1">
-  <div role="tablist" aria-label="Subject navigation" class="tabs" id="subject-tabs">
-    <button role="tab" aria-selected="true" id="tab-math" aria-controls="panel-math" tabindex="0" class="tab-btn">Matematika</button>
-    <button role="tab" aria-selected="false" id="tab-science" aria-controls="panel-science" tabindex="-1" class="tab-btn">Sains</button>
-    <button role="tab" aria-selected="false" id="tab-language" aria-controls="panel-language" tabindex="-1" class="tab-btn">Bahasa</button>
-    <button role="tab" aria-selected="false" id="tab-leaderboard" aria-controls="panel-leaderboard" tabindex="-1" class="tab-btn">Leaderboard</button>
-  </div>
-
-  <!-- Content sections same as before, omitted for brevity -->
-
-</main>
-
-<!-- LOGIN & REGISTER MODAL -->
-<div class="modal-backdrop" id="auth-modal" role="dialog" aria-modal="true" aria-labelledby="auth-title" hidden>
-  <div class="modal" role="document">
-    <button class="close-btn" aria-label="Tutup modal">&times;</button>
-
-    <div id="login-form-container">
-      <h2 id="auth-title">Masuk ke Aqua Academy</h2>
-      <form id="login-form" novalidate>
-        <label for="login-email">Email</label>
-        <input type="email" id="login-email" name="email" required autocomplete="email" />
-        <div class="form-error" id="login-email-error" aria-live="polite"></div>
-
-        <label for="login-password">Password</label>
-        <input type="password" id="login-password" name="password" required autocomplete="current-password" />
-        <div class="form-error" id="login-password-error" aria-live="polite"></div>
-
-        <button type="submit" class="submit-btn">Masuk</button>
-      </form>
-      <p class="form-toggle">
-        Belum punya akun? <button id="show-register" type="button">Daftar di sini</button>
-      </p>
+<!-- AUTH SCREENS -->
+<div id="auth-screen" class="gradient-bg min-h-screen flex items-center justify-center p-4">
+  <div class="bg-white rounded-xl shadow-2xl p-8 w-full max-w-md">
+    <div class="text-center mb-8">
+      <h1 class="text-3xl font-bold text-gray-800">Aqua Academy</h1>
+      <p class="text-gray-600 mt-2">Belajar interaktif dengan sistem leaderboard</p>
     </div>
-
-    <div id="register-form-container" hidden>
-      <h2>Daftar Akun Baru</h2>
-      <form id="register-form" novalidate>
-        <label for="register-email">Email</label>
-        <input type="email" id="register-email" name="email" required autocomplete="email" />
-        <div class="form-error" id="register-email-error" aria-live="polite"></div>
-
-        <label for="register-password">Password</label>
-        <input type="password" id="register-password" name="password" required autocomplete="new-password" />
-        <div class="form-error" id="register-password-error" aria-live="polite"></div>
-
-        <label for="register-password-confirm">Konfirmasi Password</label>
-        <input type="password" id="register-password-confirm" name="passwordConfirm" required autocomplete="new-password" />
-        <div class="form-error" id="register-password-confirm-error" aria-live="polite"></div>
-
-        <button type="submit" class="submit-btn">Daftar</button>
-      </form>
-      <p class="form-toggle">
-        Sudah punya akun? <button id="show-login" type="button">Masuk di sini</button>
-      </p>
+    <div id="auth-tabs" class="mb-6 flex border-b">
+      <button class="tab-btn py-2 px-4 font-medium text-blue-600 border-b-2 border-blue-600" data-tab="login">Login</button>
+      <button class="tab-btn py-2 px-4 font-medium text-gray-500" data-tab="register">Register</button>
     </div>
+    <div id="login-form" class="tab-content active">
+      <form id="loginForm" class="space-y-4">
+        <div><label>Email</label><input id="login-email" type="email" required class="w-full px-3 py-2 border rounded"/></div>
+        <div><label>Password</label><input id="login-password" type="password" required class="w-full px-3 py-2 border rounded"/></div>
+        <div><button type="submit" class="w-full py-2 rounded text-white bg-blue-600 hover:bg-blue-700">Login</button></div>
+      </form>
+    </div>
+    <div id="register-form" class="tab-content">
+      <form id="registerForm" class="space-y-4">
+        <div><label>Email</label><input id="register-email" required type="email" class="w-full px-3 py-2 border rounded"/></div>
+        <div><label>Password</label><input id="register-password" required type="password" class="w-full px-3 py-2 border rounded"/></div>
+        <div><label>Confirm Password</label><input id="register-confirm" required type="password" class="w-full px-3 py-2 border rounded"/></div>
+        <div><button type="submit" class="w-full py-2 rounded text-white bg-blue-600 hover:bg-blue-700">Register</button></div>
+      </form>
+    </div>
+    <div id="auth-message" class="mt-4 text-center text-sm text-gray-600"></div>
   </div>
 </div>
 
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
-  import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js";
-  import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-database.js";
+<!-- DASHBOARD -->
+<div id="dashboard" class="hidden">
+<header class="gradient-bg text-white shadow-lg">
+  <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+    <h1 class="text-xl font-bold">Aqua Academy</h1>
+    <div class="flex items-center space-x-4">
+      <span id="user-email" class="text-sm"></span>
+      <button id="logout-btn" class="bg-white text-blue-600 px-3 py-1 rounded hover:bg-gray-100">Logout</button>
+    </div>
+  </div>
+</header>
+<main class="container mx-auto px-4 py-8">
+  <h2 class="text-2xl font-bold">Selamat Datang di Aqua Academy</h2>
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-4">
+    <div class="card-hover bg-white rounded-xl p-6">
+      <h3 class="font-semibold">SD (Sekolah Dasar)</h3><p class="text-gray-600">Materi pembelajaran untuk SD</p>
+      <button class="select-level-btn w-full mt-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700" data-level="sd">Pilih Jenjang</button>
+    </div>
+    <div class="card-hover bg-white rounded-xl p-6">
+      <h3 class="font-semibold">SMP</h3><p class="text-gray-600">Materi pembelajaran untuk SMP</p>
+      <button class="select-level-btn w-full mt-4 py-2 rounded bg-green-600 text-white hover:bg-green-700" data-level="smp">Pilih Jenjang</button>
+    </div>
+    <div class="card-hover bg-white rounded-xl p-6">
+      <h3 class="font-semibold">SMA</h3><p class="text-gray-600">Materi pembelajaran untuk SMA</p>
+      <button class="select-level-btn w-full mt-4 py-2 rounded bg-purple-600 text-white hover:bg-purple-700" data-level="sma">Pilih Jenjang</button>
+    </div>
+  </div>
+  <div id="level-content" class="hidden mt-8">
+    <div class="flex space-x-4 border-b">
+      <button class="level-tab font-medium text-blue-600 border-b-2 border-blue-600" data-tab="materi">Materi</button>
+      <button class="level-tab font-medium text-gray-500" data-tab="soal">Soal</button>
+      <button class="level-tab font-medium text-gray-500" data-tab="leaderboard">Leaderboard</button>
+      <button class="level-tab font-medium text-gray-500" data-tab="diskusi">Diskusi</button>
+    </div>
+    <div id="materi-tab" class="tab-content active p-4">Konten Materi (Dummy)</div>
+    <div id="soal-tab" class="tab-content p-4">Konten Soal (Dummy)</div>
+    <div id="leaderboard-tab" class="tab-content p-4">Konten Leaderboard (Dummy)</div>
+    <div id="diskusi-tab" class="tab-content p-4">
+      <div id="chat-messages" class="bg-gray-100 rounded p-3 h-64 overflow-y-auto"></div>
+      <div class="flex mt-2">
+        <input id="chat-input" class="flex-1 rounded-l border p-2" placeholder="Ketik pesan...">
+        <button id="send-btn" class="bg-blue-600 text-white rounded-r px-3">Kirim</button>
+      </div>
+    </div>
+  </div>
+</main>
+</div>
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyDR04p3qXOTTOp9OEwz-m-M46j5x2FKuKM",
-    authDomain: "dungeon-223d9.firebaseapp.com",
-    databaseURL: "https://dungeon-223d9-default-rtdb.asia-southeast1.firebasedatabase.app",
-    projectId: "dungeon-223d9",
-    storageBucket: "dungeon-223d9.appspot.com",
-    messagingSenderId: "144074668480",
-    appId: "1:144074668480:web:a26bbacfa551112b15f025",
-    measurementId: "G-H4TYZ2Y5RQ"
-  };
+<!-- JAVASCRIPT STARTS HERE -->
+<script>
+/** CONFIGURE YOUR FIREBASE HERE **/
+const firebaseConfig = {
+  apiKey: "ISI_DENGAN_API_KEY",
+  authDomain: "ISI_DENGAN_AUTH_DOMAIN",
+  databaseURL: "ISI_DENGAN_DATABASE_URL",
+  projectId: "ISI_DENGAN_PROJECT_ID",
+  storageBucket: "ISI_DENGAN_STORAGE_BUCKET",
+  messagingSenderId: "ISI_DENGAN_MESSAGING_SENDER_ID",
+  appId: "ISI_DENGAN_APP_ID"
+};
+firebase.initializeApp(firebaseConfig);
 
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const database = getDatabase(app);
+// Elements
+const authScreen = document.getElementById("auth-screen");
+const dashboard = document.getElementById("dashboard");
+const authMessage = document.getElementById("auth-message");
 
-  const authModal = document.getElementById('auth-modal');
-  const closeBtn = authModal.querySelector('.close-btn');
-  const loginFormContainer = document.getElementById('login-form-container');
-  const registerFormContainer = document.getElementById('register-form-container');
-  const showRegisterBtn = document.getElementById('show-register');
-  const showLoginBtn = document.getElementById('show-login');
-  const navLinks = document.querySelector('nav.nav-links');
-  const btnLoginOpen = document.getElementById('btn-login');
+const loginForm = document.getElementById("loginForm");
+const registerForm = document.getElementById("registerForm");
 
-  function openModal() {
-    authModal.hidden = false;
-    loginFormContainer.hidden = false;
-    registerFormContainer.hidden = true;
-    document.body.style.overflow = 'hidden';
-    loginFormContainer.querySelector('input').focus();
-  }
+const logoutBtn = document.getElementById("logout-btn");
+const userEmailDisplay = document.getElementById("user-email");
 
-  function closeModal() {
-    authModal.hidden = true;
-    document.body.style.overflow = '';
-    clearFormErrors(loginForm);
-    clearFormErrors(registerForm);
-    loginForm.reset();
-    registerForm.reset();
-  }
-
-  closeBtn.addEventListener('click', closeModal);
-  authModal.addEventListener('click', e => { if(e.target === authModal) closeModal(); });
-  authModal.addEventListener('keydown', e => { if(e.key === 'Escape') closeModal(); });
-  btnLoginOpen.addEventListener('click', openModal);
-
-  showRegisterBtn.addEventListener('click', () => {
-    loginFormContainer.hidden = true;
-    registerFormContainer.hidden = false;
-    registerFormContainer.querySelector('input').focus();
-  });
-
-  showLoginBtn.addEventListener('click', () => {
-    registerFormContainer.hidden = true;
-    loginFormContainer.hidden = false;
-    loginFormContainer.querySelector('input').focus();
-  });
-
-  function clearFormErrors(form) {
-    form.querySelectorAll('.form-error').forEach(el => el.textContent = '');
-  }
-
-  function validateEmail(email) {
-    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return regex.test(email);
-  }
-
-  const loginForm = document.getElementById('login-form');
-  loginForm.addEventListener('submit', async e => {
-    e.preventDefault();
-    clearFormErrors(loginForm);
-    const email = loginForm.email.value.trim();
-    const password = loginForm.password.value;
-    let valid = true;
-    if (!email) {
-      loginForm.querySelector('#login-email-error').textContent = 'Email wajib diisi.';
-      valid = false;
-    } else if (!validateEmail(email)) {
-      loginForm.querySelector('#login-email-error').textContent = 'Format email tidak valid.';
-      valid = false;
-    }
-    if (!password) {
-      loginForm.querySelector('#login-password-error').textContent = 'Password wajib diisi.';
-      valid = false;
-    }
-    if (!valid) return;
-    try {
-      await signInWithEmailAndPassword(auth, email, password);
-      alert(`Selamat datang, ${email.split('@')[0]}!`);
-      closeModal();
-      updateLoginState();
-    } catch (error) {
-      loginForm.querySelector('#login-password-error').textContent = error.message;
-    }
-  });
-
-  const registerForm = document.getElementById('register-form');
-  registerForm.addEventListener('submit', async e => {
-    e.preventDefault();
-    clearFormErrors(registerForm);
-    const email = registerForm.email.value.trim();
-    const password = registerForm.password.value;
-    const confirm = registerForm.passwordConfirm.value;
-    let valid = true;
-    if (!email) {
-      registerForm.querySelector('#register-email-error').textContent = 'Email wajib diisi.';
-      valid = false;
-    } else if (!validateEmail(email)) {
-      registerForm.querySelector('#register-email-error').textContent = 'Format email tidak valid.';
-      valid = false;
-    }
-    if (password.length < 6) {
-      registerForm.querySelector('#register-password-error').textContent = 'Password minimal 6 karakter.';
-      valid = false;
-    }
-    if (confirm !== password) {
-      registerForm.querySelector('#register-password-confirm-error').textContent = 'Konfirmasi password tidak sama.';
-      valid = false;
-    }
-    if (!valid) return;
-
-    try {
-      await createUserWithEmailAndPassword(auth, email, password);
-      alert('Registrasi berhasil. Silakan login dengan akun baru Anda.');
-      registerForm.reset();
-      registerFormContainer.hidden = true;
-      loginFormContainer.hidden = false;
-      loginForm.querySelector('input').focus();
-    } catch (error) {
-      registerForm.querySelector('#register-email-error').textContent = error.message;
-    }
-  });
-
-  function logout() {
-    signOut(auth).then(() => {
-      alert('Anda telah keluar.');
-      location.reload();
-    }).catch(console.error);
-  }
-
-  function updateLoginState() {
-    const user = auth.currentUser;
-    if (user) {
-      const name = user.email.split('@')[0];
-      navLinks.innerHTML = `
-        <span style="font-weight:600; color:#2563eb;">Halo, ${name}</span>
-        <button id="btn-logout" type="button">Keluar</button>
-      `;
-      document.getElementById('btn-logout').onclick = logout;
-    } else {
-      navLinks.innerHTML = `
-        <button id="btn-login" type="button" aria-haspopup="dialog" aria-controls="auth-modal">Masuk</button>
-      `;
-      document.getElementById('btn-login').onclick = openModal;
-    }
-  }
-  onAuthStateChanged(auth, updateLoginState);
-
-  // The rest of the quiz and leaderboard code remains unchanged.
-
-  // ... quiz class and setupQuizUI function here ...
-  const quizData = {
-    matematika: [
-      { question: "Berapa hasil dari 5 + 7?", answers: ["10", "12", "13", "11"], correct: 1 },
-      { question: "Apa nama sudut yang besarnya 90 derajat?", answers: ["Sudut Lancip", "Sudut Tumpul", "Sudut Siku-siku", "Sudut Refleks"], correct: 2 },
-      { question: "Jika x + 3 = 10, maka x adalah ...?", answers: ["13", "7", "3", "10"], correct: 1 },
-      { question: "Berapa luas persegi dengan sisi 4 cm?", answers: ["8", "12", "16", "20"], correct: 2 },
-      { question: "Manakah bilangan prima?", answers: ["9", "15", "7", "21"], correct: 2 }
-    ],
-    sain: [
-      { question: "Air akan berubah menjadi uap pada suhu ...?", answers: ["100°C", "0°C", "50°C", "90°C"], correct: 0 },
-      { question: "Planet yang dikenal sebagai planet merah adalah ...?", answers: ["Venus", "Mars", "Jupiter", "Saturnus"], correct: 1 },
-      { question: "Bagian terkecil dari makhluk hidup adalah ...?", answers: ["Jaringan", "Organisme", "Sel", "Populasi"], correct: 2 },
-      { question: "Apa alat pengukur suhu yang umum digunakan?", answers: ["Barometer", "Termometer", "Anemometer", "Hygrometer"], correct: 1 },
-      { question: "Fotosintesis terjadi pada bagian ...?", answers: ["Akar", "Batang", "Daun", "Bunga"], correct: 2 }
-    ],
-    bahasa: [
-      { question: "Apa arti kata 'rumah' dalam Bahasa Inggris?", answers: ["Home", "House", "Office", "Building"], correct: 1 },
-      { question: "Kalimat yang benar dalam Bahasa Indonesia adalah ...?", answers: ["Saya makan nasi setiap hari", "Saya makan nasi setiap hari ini", "Saya nasi makan setiap hari", "Saya setiap hari makan nasi"], correct: 0 },
-      { question: "Manakah sinonim dari kata 'cepat'?", answers: ["Lambat", "Kilat", "Berat", "Kasar"], correct: 1 },
-      { question: "Apa arti kata 'beautiful' dalam Bahasa Indonesia?", answers: ["Cantik", "Buruk", "Tua", "Jauh"], correct: 0 },
-      { question: "Kalimat tanya yang benar adalah ...?", answers: ["Siapa nama kamu?", "Nama siapa kamu?", "Siapa kamu nama?", "Nama kamu siapa?"], correct: 0 }
-    ]
-  };
-
-  class Quiz {
-    constructor(topic) {
-      this.topic = topic;
-      this.questions = quizData[topic];
-      this.currentIndex = 0;
-      this.score = 0;
-    }
-    getCurrentQuestion() { return this.questions[this.currentIndex]; }
-    answer(index) {
-      const currentQ = this.getCurrentQuestion();
-      if (index === currentQ.correct) {
-        this.score++;
-        return true;
-      }
-      return false;
-    }
-    next() {
-      this.currentIndex++;
-      return this.currentIndex < this.questions.length;
-    }
-    reset() {
-      this.currentIndex = 0;
-      this.score = 0;
-    }
-  }
-
-  function createAnswerButton(text, index, onClick) {
-    const btn = document.createElement('button');
-    btn.type = 'button';
-    btn.className = 'answer-btn';
-    btn.textContent = text;
-    btn.onclick = () => onClick(index, btn);
-    return btn;
-  }
-
-  function setupQuizUI(topic, containerId, progressId, nextBtnId) {
-    const quiz = new Quiz(topic);
-    const container = document.getElementById(containerId);
-    const progressDisplay = document.getElementById(progressId);
-    const nextBtn = document.getElementById(nextBtnId);
-    let selectedAnswer = null;
-
-    function displayQuestion() {
-      const q = quiz.getCurrentQuestion();
-      container.innerHTML = '';
-      progressDisplay.textContent = `Soal ${quiz.currentIndex + 1} dari ${quiz.questions.length}`;
-
-      const questionEl = document.createElement('p');
-      questionEl.className = 'question';
-      questionEl.textContent = q.question;
-      container.appendChild(questionEl);
-
-      const answersList = document.createElement('div');
-      answersList.className = 'answers-list';
-
-      q.answers.forEach((ans, i) => {
-        const btn = createAnswerButton(ans, i, (idx, btnEl) => {
-          if (selectedAnswer !== null) return;
-          selectedAnswer = idx;
-          const isCorrect = quiz.answer(idx);
-          Array.from(answersList.children).forEach(b => b.disabled = true);
-          if (isCorrect) btnEl.classList.add('correct');
-          else {
-            btnEl.classList.add('incorrect');
-            answersList.children[q.correct].classList.add('correct');
-          }
-          nextBtn.disabled = false;
-        });
-        answersList.appendChild(btn);
-      });
-
-      container.appendChild(answersList);
-      nextBtn.disabled = true;
-      selectedAnswer = null;
-    }
-
-    nextBtn.onclick = () => {
-      const hasNext = quiz.next();
-      if (hasNext) {
-        displayQuestion();
-      } else {
-        alert(`Quiz selesai! Skor Anda: ${quiz.score} dari ${quiz.questions.length}`);
-        saveResult(quiz.topic, auth.currentUser, quiz.score);
-        nextBtn.disabled = true;
-        renderLeaderboard();
-        quiz.reset();
-        displayQuestion();
-        activateTab('tab-leaderboard');
-      }
-    };
-
-    displayQuestion();
-    return quiz;
-  }
-
-  function saveResult(topic, user, score) {
-    if (!user) return;
-    const name = user.email.split('@')[0];
-    const dbRef = ref(database, 'leaderboard');
-    push(dbRef, {
-      name,
-      topic: capitalize(topic),
-      score,
-      date: new Date().toLocaleDateString('id-ID')
+const tabBtns = document.querySelectorAll('#auth-tabs .tab-btn');
+const authTabs = {
+  login: document.getElementById("login-form"),
+  register: document.getElementById("register-form")
+};
+tabBtns.forEach(b =>
+  b.addEventListener("click", e => {
+    const tab = e.target.dataset.tab;
+    tabBtns.forEach(btn => {
+      btn.classList.toggle("border-b-2", btn.dataset.tab === tab);
+      btn.classList.toggle("text-blue-600", btn.dataset.tab === tab);
+      btn.classList.toggle("text-gray-500", btn.dataset.tab !== tab);
     });
+    for (const key in authTabs) {
+      authTabs[key].classList.toggle("active", key === tab);
+    }
+  })
+);
+
+// Auth Logic
+loginForm.addEventListener("submit", async e => {
+  e.preventDefault();
+  const email = document.getElementById("login-email").value;
+  const password = document.getElementById("login-password").value;
+  try {
+    await firebase.auth().signInWithEmailAndPassword(email, password);
+  } catch (error) {
+    authMessage.textContent = error.message;
   }
-
-  function renderLeaderboard() {
-    const tbody = document.getElementById('leaderboard-body');
-    tbody.innerHTML = '';
-    const dbRef = ref(database, 'leaderboard');
-    onValue(dbRef, (snapshot) => {
-      const data = snapshot.val();
-      tbody.innerHTML = '';
-      if (!data) {
-        const tr = document.createElement('tr');
-        const td = document.createElement('td');
-        td.textContent = 'Belum ada hasil quiz.';
-        td.colSpan = 5;
-        td.style.textAlign = 'center';
-        tr.appendChild(td);
-        tbody.appendChild(tr);
-        return;
-      }
-      const entries = Object.values(data);
-      entries.sort((a,b) => b.score - a.score);
-      const top = entries.slice(0, 50);
-      top.forEach((entry,i) => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td>${i+1}</td><td>${entry.name}</td><td>${entry.topic}</td><td>${entry.score}</td><td>${entry.date}</td>
-        `;
-        tbody.appendChild(tr);
-      });
-    }, { onlyOnce: true });
+});
+registerForm.addEventListener("submit", async e => {
+  e.preventDefault();
+  const email = document.getElementById("register-email").value;
+  const password = document.getElementById("register-password").value;
+  const confirm = document.getElementById("register-confirm").value;
+  if (password !== confirm) {
+    authMessage.textContent = "Password tidak cocok.";
+    return;
   }
-
-  function capitalize(str) {
-    return str.charAt(0).toUpperCase() + str.slice(1);
+  try {
+    await firebase.auth().createUserWithEmailAndPassword(email, password);
+  } catch (error) {
+    authMessage.textContent = error.message;
   }
-
-  function activateTab(tabId) {
-    const tab = document.getElementById(tabId);
-    tab.click();
+});
+firebase.auth().onAuthStateChanged(user => {
+  if (user) {
+    authScreen.classList.add("hidden");
+    dashboard.classList.remove("hidden");
+    userEmailDisplay.textContent = user.email;
+  } else {
+    authScreen.classList.remove("hidden");
+    dashboard.classList.add("hidden");
   }
+});
+logoutBtn.addEventListener("click", async () => {
+  await firebase.auth().signOut();
+});
 
-  const mathQuiz = setupQuizUI('matematika', 'math-question-container', 'math-quiz-progress', 'math-next-btn');
-  const scienceQuiz = setupQuizUI('sain', 'science-question-container', 'science-quiz-progress', 'science-next-btn');
-  const languageQuiz = setupQuizUI('bahasa', 'language-question-container', 'language-quiz-progress', 'language-next-btn');
+// Dashboard Logic
+const selectLevelButtons = document.querySelectorAll(".select-level-btn");
+const levelContent = document.getElementById("level-content");
+selectLevelButtons.forEach(button =>
+  button.addEventListener("click", e => {
+    levelContent.classList.remove("hidden");
+  })
+);
 
-  renderLeaderboard();
+// Level Tabs
+const levelTabs = document.querySelectorAll(".level-tab");
+levelTabs.forEach(tab =>
+  tab.addEventListener("click", e => {
+    const selected = e.target.dataset.tab;
+    levelTabs.forEach(t =>
+      t.classList.toggle("text-blue-600", t.dataset.tab === selected) );
+    document.querySelectorAll('#level-content .tab-content')
+      .forEach(content =>
+        content.classList.toggle("active", content.id === selected + '-tab')
+      );
+  })
+);
 
+// Chat Dummy
+const chatMessages = document.getElementById("chat-messages");
+const chatInput = document.getElementById("chat-input");
+const sendBtn = document.getElementById("send-btn");
+sendBtn.addEventListener("click", () => {
+  if (chatInput.value.trim() === "") return;
+  const div = document.createElement("div");
+  div.textContent = chatInput.value.trim();
+  div.className = "bg-blue-100 p-2 rounded my-1";
+  chatMessages.appendChild(div);
+  chatInput.value = ""; 
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+});
 </script>
-
 </body>
 </html>
