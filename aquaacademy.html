@@ -41,6 +41,10 @@ header {
   text-align:center;
   position:relative;
   z-index:1;
+  font-size: 1.8em;
+  font-weight: 600;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+  animation: slideDown 0.6s ease-out;
 }
 nav {
   background: rgba(0,77,64,.95);
@@ -48,8 +52,10 @@ nav {
   padding:15px;
   display:flex;
   justify-content:space-around;
+  flex-wrap: wrap;
   box-shadow:0 2px 5px rgba(0,0,0,.3);
   z-index:1;
+  animation: fadeIn 1s ease-in;
 }
 nav button {
   background:transparent;
@@ -57,10 +63,32 @@ nav button {
   color:#e0f7fa;
   cursor:pointer;
   font-weight:500;
-  transition:background .3s;
+  transition:background .3s, transform .3s;
+  padding: 10px 15px;
+  margin: 5px;
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
 }
 nav button:hover {
   background:rgba(255,204,128,.2);
+  transform: scale(1.05);
+}
+nav button::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 300%;
+  height: 300%;
+  background: rgba(255, 204, 128, 0.1);
+  transition: all 0.6s ease;
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  z-index: -1;
+}
+nav button:hover::before {
+  transform: translate(-50%, -50%) scale(1);
 }
 .container {
   padding:20px;
@@ -71,8 +99,13 @@ nav button:hover {
   background:rgba(255,255,255,.95);
   color:#004d40;
   margin:20px;
-  animation:fadeIn .5s;
+  animation:fadeInUp .5s ease;
   z-index:1;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.container:hover {
+  transform: scale(1.01);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
 }
 .active {
   display:block;
@@ -84,9 +117,12 @@ input,select {
   border:1px solid #00796b;
   width:100%;
   box-sizing:border-box;
+  background: rgba(255, 255, 255, 0.8);
+  transition: border-color 0.3s, background 0.3s;
 }
 input:focus,select:focus {
   border-color:#ffcc80;
+  background: rgba(255,255,255,1);
   outline:none;
 }
 button {
@@ -97,12 +133,13 @@ button {
   background:#00796b;
   color:#fff;
   cursor:pointer;
-  transition:background .3s, transform .2s;
+  transition:background .3s, transform .2s, box-shadow .3s;
   width:100%; 
 }
 button:hover {
   background:#ff8f00;
   transform:scale(1.03);
+  box-shadow: 0 0 15px #ff8f00aa;
 }
 .error {
   color:#ff5722;
@@ -112,6 +149,7 @@ button:hover {
   display:none;
   margin:20px auto;
   text-align:center;
+  animation: pulse 1.5s infinite;
 }
 .dark-mode {
   background:#001f24;
@@ -126,10 +164,7 @@ footer {
   bottom:0;
   width:100%; 
   z-index:1;
-}
-@keyframes fadeIn {
-  from{opacity:0;}
-  to{opacity:1;}
+  font-size: 0.9em;
 }
 
 /* ==========================
@@ -173,6 +208,68 @@ footer {
 }
 .leaderboard-subject table tr:nth-child(even) {
   background-color:#b2dfdb;
+}
+
+/* ==========================
+    ANIMATIONS
+========================== */
+@keyframes fadeIn {
+  from{opacity:0;}
+  to{opacity:1;}
+}
+@keyframes fadeInUp {
+  from {opacity: 0; transform: translateY(20px);}
+  to {opacity: 1; transform: translateY(0);}
+}
+@keyframes slideDown {
+  from {opacity: 0; transform: translateY(-20px);}
+  to {opacity: 1; transform: translateY(0);}
+}
+@keyframes pulse {
+  0% {transform: scale(1);}
+  50% {transform: scale(1.05);}
+  100% {transform: scale(1);}
+}
+
+/* ==========================
+    RESPONSIVE STYLES
+========================== */
+@media (max-width: 768px) {
+  nav {
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+  }
+  nav button {
+    width: 100%;
+    margin: 5px 0;
+    font-size: 1em;
+  }
+  .container {
+    margin: 10px;
+    padding: 15px;
+    font-size: 0.95em;
+  }
+  header {
+    font-size: 1.2em;
+    padding: 15px;
+  }
+  input, select, button {
+    font-size: 1em;
+  }
+  .leaderboard-subject table th,
+  .leaderboard-subject table td {
+    font-size: 0.9em;
+    padding: 8px 10px;
+  }
+  .leaderboard-subject h3,
+  .leaderboard-subject h4 {
+    font-size: 1.05em;
+  }
+  footer {
+    font-size: 0.85em;
+    padding: 8px;
+  }
 }
 </style>
 
