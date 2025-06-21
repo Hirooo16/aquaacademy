@@ -500,14 +500,16 @@ function loadLeaderboards() {
     db.ref('users').once('value').then(snapshot => {
         const data = snapshot.val();
         const subjects = ["physics","chemistry","biology","indonesian","english","math"];
+        
         subjects.forEach(sub => {
             let scores = [];
             for (let uid in data) {
-                scores.push({name: data[uid].name, score: data[uid].points[sub] || 0});
+                const user = data[uid];
+                const score = user.points && user.points[sub] ? user.points[sub] : 0;
+                scores.push({ name: user.name, score });
             }
             scores.sort((a, b) => b.score - a.score);
             
-            // Buat Table
             let tableRows = scores.slice(0, 10).map((user, index) =>
                 `<tr><td>${index + 1}</td><td>${user.name}</td><td>${user.score}</td></tr>`).join('');
 
@@ -520,12 +522,16 @@ function loadLeaderboards() {
                     </table>
                 </div>`;
         });
+
         // Overall Leaderboard
         let overall = [];
         for (let uid in data) {
-            overall.push({name: data[uid].name, score: data[uid].total_score || 0});
+            const user = data[uid];
+            const score = user.total_score || 0;
+            overall.push({ name: user.name, score });
         }
         overall.sort((a, b) => b.score - a.score);
+
         let overallRows = overall.slice(0, 10).map((user, index) =>
             `<tr><td>${index + 1}</td><td>${user.name}</td><td>${user.score}</td></tr>`).join('');
 
