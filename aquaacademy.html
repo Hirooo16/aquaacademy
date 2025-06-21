@@ -459,6 +459,12 @@ document.getElementById('registerButton').addEventListener('click', async() => {
 // =================== AUTH STATE CHANGED ===================
 auth.onAuthStateChanged(user => {
     if (user) {
+        if (!user.emailVerified) {
+            alert("Please verify your email first. Check your inbox.");
+            auth.signOut();
+            return;
+        }
+
         showLoading();
         db.ref('users/' + user.uid).once('value')
             .then(snapshot => {
@@ -470,7 +476,7 @@ auth.onAuthStateChanged(user => {
                     loadLeaderboards();
                     showContainer('dashboard');
                 } else {
-                    alert("Data user tidak ditemukan. Mohon daftar ulang.");
+                    alert("User data not found. Please register again.");
                     auth.signOut();
                 }
             })
@@ -479,6 +485,7 @@ auth.onAuthStateChanged(user => {
         showContainer('loginScreen');
     }
 });
+
 
 // =================== UTILITY LOADS ===================
 function loadProfile() {
