@@ -1261,19 +1261,18 @@ function loadLeaderboards() {
         const educationLevels = ["SD", "SMP", "SMA"];
 
         educationLevels.forEach(level => {
-            // Buat wrapper div untuk tiap education level
             leaderboardDiv.innerHTML += `<div class="education-section">
                 <h2>Leaderboard - ${level}</h2>`;
 
-            // Leaderboard per mapel untuk education level ini
             subjects.forEach(subject => {
                 let scores = [];
 
                 for (let uid in data) {
                     const user = data[uid];
                     if (user.educationLevel === level) {
-                        const score = user.points && user.points[subject] ? user.points[subject] : 0;
-                        scores.push({ name: user.name, score });
+                        const pointData = user.points && typeof user.points === 'object' ? user.points : {};
+                        const score = typeof pointData[subject] === 'number' ? pointData[subject] : 0;
+                        scores.push({ name: user.name || "Unknown", score });
                     }
                 }
 
@@ -1294,34 +1293,38 @@ function loadLeaderboards() {
                     </div>`;
             });
 
-            // Leaderboard keseluruhan (total_score) untuk education level ini
+            // Overall leaderboard
             let overall = [];
 
             for (let uid in data) {
                 const user = data[uid];
                 if (user.educationLevel === level) {
-                    const score = user.total_score || 0;
-                    overall.push({ name: user.name, score });
+                    const score = typeof user.total_score === 'number' ? user.total_score : 0;
+                    overall.push({ name: user.name || "Unknown", score });
                 }
             }
 
-            overall.sort((a, b) => b.score - a.score);
+            if (overall.length > 0) {
+                overall.sort((a, b) => b.score - a.score);
 
-            let overallRows = overall.slice(0, 10).map((user, index) =>
-                `<tr><td>${index + 1}</td><td>${user.name}</td><td>${user.score}</td></tr>`).join('');
+                let overallRows = overall.slice(0, 10).map((user, index) =>
+                    `<tr><td>${index + 1}</td><td>${user.name}</td><td>${user.score}</td></tr>`).join('');
 
-            leaderboardDiv.innerHTML += `
-                <div class="leaderboard-subject">
-                    <h3>Overall ${level} Leaderboard (Top 10)</h3>
-                    <table>
-                        <thead><tr><th>Rank</th><th>Name</th><th>Score</th></tr></thead>
-                        <tbody>${overallRows}</tbody>
-                    </table>
-                </div>
-            </div>`; // Tutup wrapper education section
+                leaderboardDiv.innerHTML += `
+                    <div class="leaderboard-subject">
+                        <h3>Overall ${level} Leaderboard (Top 10)</h3>
+                        <table>
+                            <thead><tr><th>Rank</th><th>Name</th><th>Score</th></tr></thead>
+                            <tbody>${overallRows}</tbody>
+                        </table>
+                    </div>`;
+            }
+
+            leaderboardDiv.innerHTML += `</div>`; // close education section
         });
     });
 }
+
 
 
 // =================== LOGIKA TOMBOL ===================
