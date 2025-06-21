@@ -427,21 +427,26 @@ document.getElementById('registerButton').addEventListener('click', async() => {
     const educationLevel = document.getElementById('educationLevel').value.trim();
     const password = document.getElementById('registerPassword').value.trim();
     const confirmPassword = document.getElementById('confirmPassword').value.trim();
+
     if (!name || !email.endsWith('@atlantis.student.com') || !educationLevel || password.length < 6 || password !== confirmPassword) {
         document.getElementById('registerError').innerText = "Check all fields and match passwords.";
         return;
     }
+
     showLoading();
     try {
         const userCred = await auth.createUserWithEmailAndPassword(email, password);
-        await userCred.user.sendEmailVerification();
-        await db.ref('users/' + userCred.user.uid).set({
+        const uid = userCred.user.uid;
+
+        await db.ref('users/' + uid).set({
             name,
             email,
             education_level: educationLevel,
             points: { physics:0, chemistry:0, biology:0, indonesian:0, english:0, math:0 },
             total_score: 0
         });
+
+        await userCred.user.sendEmailVerification();
         alert("Registration successful! Check your email for verification.");
         showContainer('loginScreen');
     } catch(error) {
