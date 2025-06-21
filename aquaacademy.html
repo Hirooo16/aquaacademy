@@ -837,7 +837,8 @@ document.getElementById('registerButton').addEventListener('click', async() => {
 
     showLoading();
     try {
-        const userCred = await auth.createUser WithEmailAndPassword(email, password);
+        const userCred = await auth.createUserWithEmailAndPassword(email, password);
+;
 
         // Simpan ke database
         await db.ref('users/' + userCred.user.uid).set({
