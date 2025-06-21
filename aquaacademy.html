@@ -201,14 +201,27 @@ document.getElementById('registerButton').addEventListener('click', async() => {
 auth.onAuthStateChanged(user => {
     if (user) {
         showLoading();
-        db.ref('users/' + user.uid).once('value').then(snapshot => {
-            currentUser = snapshot.val();
-            currentUser.uid = user.uid;
-            loadProfile();
-            loadQuestions();
-            loadLeaderboards();
-            showContainer('dashboard');
-        }).finally(hideLoading);
+        db.ref('users/' + user.uid).once('value')
+            .then(snapshot => {
+                if (snapshot.exists()) {
+                    currentUser = snapshot.val();
+                    currentUser.uid = user.uid;
+
+                    loadProfile();
+                    loadQuestions();
+                    loadLeaderboards();
+                    showContainer('dashboard');
+                } else {
+                    console.error("User data tidak ditemukan di database!");
+                    alert("Data user tidak ditemukan. Mohon daftar ulang.");
+                    auth.signOut();
+                }
+            })
+            .catch(error => {
+                console.error(error);
+                alert("Terjadi error membaca data user.");
+            })
+            .finally(hideLoading);
     } else {
         showContainer('loginScreen');
     }
