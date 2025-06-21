@@ -708,18 +708,39 @@ const questions = {
   }
 };
 
+
+// Real-time listener untuk leaderboard
+db.ref('users').on('value', snapshot => {
+    loadLeaderboards(); // Panggil fungsi untuk memuat leaderboard setiap kali data berubah
+});
+
+// Real-time listener untuk profil pengguna
+auth.onAuthStateChanged(user => {
+    if (user) {
+        db.ref('users/' + user.uid).on('value', snapshot => {
+            if (snapshot.exists()) {
+                currentUser  = snapshot.val();
+                currentUser .uid = user.uid;
+                loadProfile(); // Perbarui tampilan profil
+            }
+        });
+    }
+});
+
 function showContainer(containerId) {
     document.querySelectorAll('.container').forEach(el => el.classList.remove('active'));
     document.getElementById(containerId).classList.add('active');
 }
+
 function showPage(pageId) {
     document.querySelectorAll('#dashboard .container').forEach(el => el.classList.remove('active'));
     document.getElementById(pageId).classList.add('active');
 }
+
 function showLoading() { document.getElementById('loadingSpinner').style.display = 'block'; }
 function hideLoading() { document.getElementById('loadingSpinner').style.display = 'none'; }
 
-// =================== EXERCISES LOGIC ===================
+// =================== LOGIKA LATIHAN ===================
 const subjectSelectEl = document.getElementById('subjectSelect');
 const startExerciseButton = document.getElementById('startExercise');
 const questionDisplay = document.getElementById('questionDisplay');
@@ -730,7 +751,7 @@ startExerciseButton.addEventListener('click', async() => {
         alert('Pilih mata pelajaran dulu!');
         return;
     }
-    if (!questions[currentUser.education_level][currentSubject]) {
+    if (!questions[currentUser .education_level][currentSubject]) {
         alert('Maaf, belum ada soal untuk mata pelajaran ini!');
         return;
     }
@@ -742,7 +763,7 @@ startExerciseButton.addEventListener('click', async() => {
 });
 
 function showNextQuestion() {
-    const subjectQuestions = questions[currentUser.education_level][currentSubject];
+    const subjectQuestions = questions[currentUser .education_level][currentSubject];
     if (currentQuestionIndex >= Math.min(10, subjectQuestions.length)) {
         endExercise();
         return;
@@ -770,23 +791,22 @@ function showNextQuestion() {
 }
 
 async function endExercise() {
-    alert(`Kamu selesai! Skor kamu: ${userScore}/${Math.min(10, questions[currentUser.education_level][currentSubject].length)}`);
-    await db.ref(`users/${currentUser.uid}/points/${currentSubject}`)
+    alert(`Kamu selesai! Skor kamu: ${userScore}/${Math.min(10, questions[currentUser .education_level][currentSubject].length)}`);
+    await db.ref(`users/${currentUser .uid}/points/${currentSubject}`)
         .transaction(val => (val || 0) + userScore);
-    await db.ref(`users/${currentUser.uid}/total_score`)
+    await db.ref(`users/${currentUser .uid}/total_score`)
         .transaction(val => (val || 0) + userScore);
     alert("Skor kamu berhasil disimpan!");
-    db.ref('users/' + currentUser.uid).once('value').then(snapshot => {
-        currentUser = snapshot.val();
-        currentUser.uid = auth.currentUser.uid;
+    db.ref('users/' + currentUser .uid).once('value').then(snapshot => {
+        currentUser  = snapshot.val();
+        currentUser .uid = auth.currentUser .uid;
         loadProfile();
         loadLeaderboards(); // Tambahkan ini agar leaderboard langsung update
-
     });
     questionDisplay.innerHTML = '';
 }
 
-// =================== AUTH LOGIC ===================
+// =================== LOGIKA AUTENTIKASI ===================
 document.getElementById('loginButton').addEventListener('click', async() => {
     const email = document.getElementById('loginEmail').value.trim();
     const password = document.getElementById('loginPassword').value.trim();
@@ -803,6 +823,7 @@ document.getElementById('loginButton').addEventListener('click', async() => {
         hideLoading();
     }
 });
+
 document.getElementById('registerButton').addEventListener('click', async() => {
     const name = document.getElementById('name').value.trim();
     const email = document.getElementById('registerEmail').value.trim();
@@ -817,7 +838,7 @@ document.getElementById('registerButton').addEventListener('click', async() => {
 
     showLoading();
     try {
-        const userCred = await auth.createUserWithEmailAndPassword(email, password);
+        const userCred = await auth.createUser WithEmailAndPassword(email, password);
 
         // Simpan ke database
         await db.ref('users/' + userCred.user.uid).set({
@@ -837,21 +858,21 @@ document.getElementById('registerButton').addEventListener('click', async() => {
     }
 });
 
-// =================== AUTH STATE CHANGED ===================
+// =================== PERUBAHAN STATUS AUTENTIKASI ===================
 auth.onAuthStateChanged(user => {
     if (user) {
         showLoading();
         db.ref('users/' + user.uid).once('value')
             .then(snapshot => {
                 if (snapshot.exists()) {
-                    currentUser = snapshot.val();
-                    currentUser.uid = user.uid;
+                    currentUser  = snapshot.val();
+                    currentUser .uid = user.uid;
 
                     loadProfile();
                     loadLeaderboards();
                     showContainer('dashboard');
                 } else {
-                    alert("User data not found. Please register again.");
+                    alert("User  data not found. Please register again.");
                     auth.signOut();
                 }
             })
@@ -860,22 +881,24 @@ auth.onAuthStateChanged(user => {
         showContainer('loginScreen');
     }
 });
-// =================== UTILITY LOADS ===================
+
+// =================== UTILITAS MUAT ===================
 function loadProfile() {
     document.getElementById('profileInfo').innerHTML = `
-        <p>Name: ${currentUser.name}</p>
-        <p>Email: ${currentUser.email}</p>
-        <p>Education Level: ${currentUser.education_level}</p>
+        <p>Name: ${currentUser .name}</p>
+        <p>Email: ${currentUser .email}</p>
+        <p>Education Level: ${currentUser .education_level}</p>
         <p>Points:
-            Physics: ${currentUser.points.physics || 0},
-            Chemistry: ${currentUser.points.chemistry || 0},
-            Biology: ${currentUser.points.biology || 0},
-            Indonesian: ${currentUser.points.indonesian || 0},
-            English: ${currentUser.points.english || 0},
-            Math: ${currentUser.points.math || 0}
+            Physics: ${currentUser .points.physics || 0},
+            Chemistry: ${currentUser .points.chemistry || 0},
+            Biology: ${currentUser .points.biology || 0},
+            Indonesian: ${currentUser .points.indonesian || 0},
+            English: ${currentUser .points.english || 0},
+            Math: ${currentUser .points.math || 0}
         </p>
-        <p>Total Score: ${currentUser.total_score}</p>`;
+        <p>Total Score: ${currentUser .total_score}</p>`;
 }
+
 function loadLeaderboards() {
     const leaderboardDiv = document.getElementById('allLeaderboards');
     leaderboardDiv.innerHTML = '';
@@ -905,7 +928,7 @@ function loadLeaderboards() {
                 </div>`;
         });
 
-        // Overall Leaderboard
+        // Leaderboard Keseluruhan
         let overall = [];
         for (let uid in data) {
             const user = data[uid];
@@ -928,33 +951,38 @@ function loadLeaderboards() {
     });
 }
 
-// =================== BUTTONS LOGIC ===================
+// =================== LOGIKA TOMBOL ===================
 document.querySelectorAll('nav button[data-page]').forEach(button => {
     button.addEventListener('click', e => {
         showPage(button.getAttribute('data-page'));
     });
 });
+
 document.getElementById('changePasswordButton').addEventListener('click', async() => {
     const newPass = prompt("Enter new password:");
     if(newPass) {
         try {
-            await auth.currentUser.updatePassword(newPass);
+            await auth.currentUser .updatePassword(newPass);
             alert("Password updated!");
         } catch(error) {
             alert(error.message);
         }
     }
 });
+
 document.getElementById('logoutButton').addEventListener('click', async() => {
     await auth.signOut();
 });
+
 document.getElementById('toggleDarkMode').addEventListener('click', () => {
     document.body.classList.toggle('dark-mode');
 });
+
 document.getElementById('showRegisterLink').addEventListener('click', e => {
     e.preventDefault();
     showContainer('registerScreen');
 });
+
 document.getElementById('showLoginLink').addEventListener('click', e => {
     e.preventDefault();
     showContainer('loginScreen');
