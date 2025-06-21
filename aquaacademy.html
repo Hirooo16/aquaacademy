@@ -5,29 +5,27 @@
 <title>Atlantis Academy</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<!-- Fonts & Styles -->
+<!-- Styles & Fonts -->
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700" rel="stylesheet">
 <style>
-/* Styles panjang kamu tetap */
-body { font-family: 'Roboto', sans-serif; margin: 0; color: #00796b; display: flex; flex-direction: column; min-height: 100vh; overflow: hidden; position: relative; }
-.water { position: absolute; top: 0; left: 0; width:100%; height:100%; background: rgba(0,150,136,.5); animation: wave 6s infinite linear; z-index: 0; }
-@keyframes wave { 0% { transform: translateY(0);} 50% { transform: translateY(10px);}100%{ transform: translateY(0);} }
-header { background: rgba(0,121,107,.8); color: #fff; padding:20px; text-align:center; position:relative; z-index:1; animation: fadeIn .5s;}
-nav { background: rgba(0,77,64,.8); color:#fff; padding:15px; display:flex; justify-content: space-around; box-shadow:0 2px 5px rgba(0,0,0,.2); animation:slideIn .5s; z-index:1; }
-nav button { background:transparent; border:none; color:#fff; cursor:pointer; font-weight:500; transition:background .3s;}
-nav button:hover { background:rgba(255,255,255,.1);}
-.container { padding:20px; flex:1; display:none; border-radius:8px; box-shadow:0 2px 10px rgba(0,0,0,.1); background:#fff; margin:20px; animation:fadeIn .5s; z-index:1; }
-.active { display:block; }
-input,select { padding:10px; margin:10px 0; border-radius:5px; border:1px solid #00796b; width:100%; box-sizing:border-box; transition:border .3s; }
-input:focus,select:focus { border-color:#004d40; outline:none; }
-button { padding:10px; margin:10px 0; border-radius:5px; border:none; background:#00796b; color:#fff; cursor:pointer; transition:background .3s, transform .2s; width:100%; }
-button:hover { background:#004d40; transform:scale(1.05); }
-.error { color:red; margin:10px 0; }
-.spinner { display:none; margin:20px auto; text-align:center; }
-.dark-mode { background:#004d40; color:#e0f7fa; }
-footer { text-align:center; padding:10px; background:#00796b; color:#fff; position:relative; bottom:0; width:100%; z-index:1; }
-@keyframes fadeIn { from{opacity:0;}to{opacity:1;} }
-@keyframes slideIn { from{ transform:translateY(-20px); opacity:0;} to{ transform:translateY(0); opacity:1;} }
+body { font-family: 'Roboto', sans-serif; margin: 0; color: #00796b; display: flex; flex-direction: column; min-height:100vh; overflow: hidden; position: relative;}
+.water { position:absolute; top:0; left:0; width:100%; height:100%; background: rgba(0,150,136,.5); animation: wave 6s infinite linear; z-index:0; }
+@keyframes wave {0% {transform: translateY(0);} 50% {transform: translateY(10px);}100%{transform: translateY(0);} }
+header {background: rgba(0,121,107,.8); color:#fff; padding:20px; text-align:center; position:relative; z-index:1;}
+nav {background: rgba(0,77,64,.8); color:#fff; padding:15px; display:flex; justify-content:space-around; box-shadow:0 2px 5px rgba(0,0,0,.2); z-index:1;}
+nav button {background:transparent; border:none; color:#fff; cursor:pointer; font-weight:500; transition:background .3s;}
+nav button:hover {background:rgba(255,255,255,.1)}
+.container {padding:20px; flex:1; display:none; border-radius:8px; box-shadow:0 2px 10px rgba(0,0,0,.1); background:#fff; margin:20px; animation:fadeIn .5s; z-index:1;}
+.active {display:block;}
+input,select {padding:10px; margin:10px 0; border-radius:5px; border:1px solid #00796b; width:100%; box-sizing:border-box;}
+input:focus,select:focus {border-color:#004d40; outline:none;}
+button {padding:10px; margin:10px 0; border-radius:5px; border:none; background:#00796b; color:#fff; cursor:pointer; transition:background .3s, transform .2s; width:100%; }
+button:hover {background:#004d40; transform:scale(1.05);}
+.error {color:red; margin:10px 0;}
+.spinner {display:none; margin:20px auto; text-align:center;}
+.dark-mode {background:#004d40; color:#e0f7fa;}
+footer {text-align:center; padding:10px; background:#00796b; color:#fff; position:relative; bottom:0; width:100%; z-index:1;}
+@keyframes fadeIn {from{opacity:0;}to{opacity:1;}}
 </style>
 
 <!-- Firebase Scripts -->
@@ -94,21 +92,21 @@ footer { text-align:center; padding:10px; background:#00796b; color:#fff; positi
         </ul>
     </div>
     <div id="exercisesPage" class="container">
-    <h3>Exercises</h3>
-    <div id="subjectSelector">
-        <select id="subjectSelect">
-            <option value="">Pilih Mata Pelajaran</option>
-            <option value="physics">Physics</option>
-            <option value="chemistry">Chemistry</option>
-            <option value="biology">Biology</option>
-            <option value="indonesian">Indonesian</option>
-            <option value="english">English</option>
-            <option value="math">Math</option>
-        </select>
-        <button id="startExercise">Mulai</button>
+        <h3>Exercises</h3>
+        <div id="subjectSelector">
+            <select id="subjectSelect">
+                <option value="">Pilih Mata Pelajaran</option>
+                <option value="physics">Physics</option>
+                <option value="chemistry">Chemistry</option>
+                <option value="biology">Biology</option>
+                <option value="indonesian">Indonesian</option>
+                <option value="english">English</option>
+                <option value="math">Math</option>
+            </select>
+            <button id="startExercise">Mulai</button>
+        </div>
+        <div id="questionDisplay"></div>
     </div>
-    <div id="questionDisplay"></div>
-</div>
     <div id="leaderboardsPage" class="container">
         <h3>Leaderboards</h3>
         <div id="allLeaderboards"></div>
@@ -130,54 +128,73 @@ const firebaseConfig = {
 };
 firebase.initializeApp(firebaseConfig);
 
+const auth = firebase.auth();
+const db = firebase.database();
 
-    // ====================================================
-// LOGIC UNTUK EXERCISES
-// ====================================================
-let selectedSubject = '';
+// State
+let currentUser = null;
+let currentSubject = '';
 let currentQuestionIndex = 0;
 let userScore = 0;
 
-const subjectSelect = document.getElementById('subjectSelect');
+const questions = {
+    SD: {
+        physics: [{q: "Contoh soal Fisika SD?", options: ["A", "B", "C", "D"], answer: "A"}],
+        chemistry: [{q: "Contoh soal Kimia SD?", options: ["A", "B", "C", "D"], answer: "B"}]
+    },
+    SMP: {
+        physics: [{q: "Contoh soal Fisika SMP?", options: ["A", "B", "C", "D"], answer: "A"}]
+    },
+    SMA: {
+        physics: [{q: "Contoh soal Fisika SMA?", options: ["A", "B", "C", "D"], answer: "B"}]
+    }
+};
+
+function showContainer(containerId) {
+    document.querySelectorAll('.container').forEach(el => el.classList.remove('active'));
+    document.getElementById(containerId).classList.add('active');
+}
+function showPage(pageId) {
+    document.querySelectorAll('#dashboard .container').forEach(el => el.classList.remove('active'));
+    document.getElementById(pageId).classList.add('active');
+}
+function showLoading() { document.getElementById('loadingSpinner').style.display = 'block'; }
+function hideLoading() { document.getElementById('loadingSpinner').style.display = 'none'; }
+
+// =================== EXERCISES LOGIC ===================
+const subjectSelectEl = document.getElementById('subjectSelect');
 const startExerciseButton = document.getElementById('startExercise');
 const questionDisplay = document.getElementById('questionDisplay');
 
 startExerciseButton.addEventListener('click', async() => {
-    selectedSubject = subjectSelect.value;
-    if (!selectedSubject) {
+    currentSubject = subjectSelectEl.value;
+    if (!currentSubject) {
         alert('Pilih mata pelajaran dulu!');
         return;
     }
-    if (!questions[currentUser.education_level][selectedSubject]) {
+    if (!questions[currentUser.education_level][currentSubject]) {
         alert('Maaf, belum ada soal untuk mata pelajaran ini!');
         return;
     }
-    if (confirm(`Kamu siap menjawab soal ${selectedSubject}?`)) {
-        // Reset state soal
+    if (confirm(`Kamu siap menjawab soal ${currentSubject}?`)) {
         currentQuestionIndex = 0;
         userScore = 0;
-
-        // Mulai soal
         showNextQuestion();
     }
 });
 
 function showNextQuestion() {
-    const subjectQuestions = questions[currentUser.education_level][selectedSubject];
+    const subjectQuestions = questions[currentUser.education_level][currentSubject];
     if (currentQuestionIndex >= Math.min(10, subjectQuestions.length)) {
-        // Sudah selesai
         endExercise();
         return;
     }
-
     const qObj = subjectQuestions[currentQuestionIndex];
     questionDisplay.innerHTML = `
         <p>${currentQuestionIndex + 1}. ${qObj.q}</p>
         ${qObj.options.map(opt =>
             `<button class="optionBtn" data-answer="${qObj.answer}">${opt}</button>`).join('')}
     `;
-
-    // Event click jawaban
     document.querySelectorAll('.optionBtn').forEach(button => {
         button.addEventListener('click', e => {
             const correctAnswer = e.target.getAttribute('data-answer');
@@ -195,55 +212,21 @@ function showNextQuestion() {
 }
 
 async function endExercise() {
-    alert(`Kamu selesai! Skor kamu: ${userScore}/${Math.min(10, questions[currentUser.education_level][selectedSubject].length)}`);
-    // Simpan Skor
-    await db.ref(`users/${currentUser.uid}/points/${selectedSubject}`)
+    alert(`Kamu selesai! Skor kamu: ${userScore}/${Math.min(10, questions[currentUser.education_level][currentSubject].length)}`);
+    await db.ref(`users/${currentUser.uid}/points/${currentSubject}`)
         .transaction(val => (val || 0) + userScore);
     await db.ref(`users/${currentUser.uid}/total_score`)
         .transaction(val => (val || 0) + userScore);
-
-    // Refresh Profil
     alert("Skor kamu berhasil disimpan!");
-    // Muat ulang data
     db.ref('users/' + currentUser.uid).once('value').then(snapshot => {
         currentUser = snapshot.val();
         currentUser.uid = auth.currentUser.uid;
         loadProfile();
     });
-    // Kosongkan Tampilan
     questionDisplay.innerHTML = '';
 }
 
-// Soal disimpan DI SINI!
-const questions = {
-    SD: {
-        physics: [{q: "Contoh soal Fisika SD?", options: ["A", "B", "C", "D"], answer: "A"}],
-        chemistry: [{q: "Contoh soal Kimia SD?", options: ["A", "B", "C", "D"], answer: "B"}]
-    },
-    SMP: {
-        physics: [{q: "Contoh soal Fisika SMP?", options: ["A", "B", "C", "D"], answer: "A"}]
-    },
-    SMA: {
-        physics: [{q: "Contoh soal Fisika SMA?", options: ["A", "B", "C", "D"], answer: "B"}]
-    }
-};
-
-const auth = firebase.auth();
-const db = firebase.database();
-let currentUser = null;
-
-function showPage(pageId) {
-    document.querySelectorAll('#dashboard .container').forEach(el => el.classList.remove('active'));
-    document.getElementById(pageId).classList.add('active');
-}
-function showContainer(containerId) {
-    document.querySelectorAll('.container').forEach(el => el.classList.remove('active'));
-    document.getElementById(containerId).classList.add('active');
-}
-function showLoading() { document.getElementById('loadingSpinner').style.display = 'block'; }
-function hideLoading() { document.getElementById('loadingSpinner').style.display = 'none'; }
-
-// Login
+// =================== AUTH LOGIC ===================
 document.getElementById('loginButton').addEventListener('click', async() => {
     const email = document.getElementById('loginEmail').value.trim();
     const password = document.getElementById('loginPassword').value.trim();
@@ -254,21 +237,18 @@ document.getElementById('loginButton').addEventListener('click', async() => {
     showLoading();
     try {
         await auth.signInWithEmailAndPassword(email, password);
-    } catch (error) {
+    } catch(error) {
         document.getElementById('loginError').innerText = error.message;
     } finally {
         hideLoading();
     }
 });
-
-// Register
 document.getElementById('registerButton').addEventListener('click', async() => {
     const name = document.getElementById('name').value.trim();
     const email = document.getElementById('registerEmail').value.trim();
     const educationLevel = document.getElementById('educationLevel').value.trim();
     const password = document.getElementById('registerPassword').value.trim();
     const confirmPassword = document.getElementById('confirmPassword').value.trim();
-
     if (!name || !email.endsWith('@atlantis.student.com') || !educationLevel || password.length < 6 || password !== confirmPassword) {
         document.getElementById('registerError').innerText = "Check all fields and match passwords.";
         return;
@@ -284,7 +264,7 @@ document.getElementById('registerButton').addEventListener('click', async() => {
             points: { physics:0, chemistry:0, biology:0, indonesian:0, english:0, math:0 },
             total_score: 0
         });
-        alert("Registration successful! Please check your email for verification.");
+        alert("Registration successful! Check your email for verification.");
         showContainer('loginScreen');
     } catch(error) {
         document.getElementById('registerError').innerText = error.message;
@@ -293,7 +273,7 @@ document.getElementById('registerButton').addEventListener('click', async() => {
     }
 });
 
-// Auth State
+// =================== AUTH STATE CHANGED ===================
 auth.onAuthStateChanged(user => {
     if (user) {
         showLoading();
@@ -304,18 +284,12 @@ auth.onAuthStateChanged(user => {
                     currentUser.uid = user.uid;
 
                     loadProfile();
-                    loadQuestions();
                     loadLeaderboards();
                     showContainer('dashboard');
                 } else {
-                    console.error("User data tidak ditemukan di database!");
                     alert("Data user tidak ditemukan. Mohon daftar ulang.");
                     auth.signOut();
                 }
-            })
-            .catch(error => {
-                console.error(error);
-                alert("Terjadi error membaca data user.");
             })
             .finally(hideLoading);
     } else {
@@ -323,7 +297,7 @@ auth.onAuthStateChanged(user => {
     }
 });
 
-// Load Profile
+// =================== UTILITY LOADS ===================
 function loadProfile() {
     document.getElementById('profileInfo').innerHTML = `
         <p>Name: ${currentUser.name}</p>
@@ -339,46 +313,6 @@ function loadProfile() {
         </p>
         <p>Total Score: ${currentUser.total_score}</p>`;
 }
-
-// Load Questions
-function loadQuestions() {
-    const education = currentUser.education_level;
-    const questionsContainer = document.getElementById('questionsContainer');
-    questionsContainer.innerHTML = '';
-    if (!questions[education]) {
-        questionsContainer.innerHTML = "<p>Tidak ada soal untuk jenjang ini.</p>";
-        return;
-    }
-    const subjects = questions[education];
-    for (const subject in subjects) {
-        questionsContainer.innerHTML += `<h4>${subject.toUpperCase()}</h4>`;
-        subjects[subject].forEach((qObj, index) => {
-            const div = document.createElement('div');
-            div.innerHTML = `
-                <p>${index + 1}. ${qObj.q}</p>
-                ${qObj.options.map(opt =>
-                    `<button data-subject="${subject}" data-answer="${qObj.answer}">${opt}</button>`).join('')}
-            `;
-            questionsContainer.appendChild(div);
-        });
-    }
-    questionsContainer.querySelectorAll('button').forEach(button => {
-        button.addEventListener('click', e => {
-            const subject = e.target.getAttribute('data-subject');
-            const correctAnswer = e.target.getAttribute('data-answer');
-            const selected = e.target.textContent.trim();
-            if (selected === correctAnswer) {
-                alert("Correct!");
-                db.ref(`users/${currentUser.uid}/points/${subject}`).transaction(val => (val || 0) + 1);
-                db.ref(`users/${currentUser.uid}/total_score`).transaction(val => (val || 0) + 1);
-            } else {
-                alert("Wrong Answer.");
-            }
-        });
-    });
-}
-
-// Load Leaderboards
 function loadLeaderboards() {
     const leaderboardDiv = document.getElementById('allLeaderboards');
     leaderboardDiv.innerHTML = '';
@@ -408,14 +342,12 @@ function loadLeaderboards() {
     });
 }
 
-// Navbar Buttons
+// =================== BUTTONS LOGIC ===================
 document.querySelectorAll('nav button[data-page]').forEach(button => {
     button.addEventListener('click', e => {
         showPage(button.getAttribute('data-page'));
     });
 });
-
-// Change Password
 document.getElementById('changePasswordButton').addEventListener('click', async() => {
     const newPass = prompt("Enter new password:");
     if(newPass) {
@@ -427,18 +359,12 @@ document.getElementById('changePasswordButton').addEventListener('click', async(
         }
     }
 });
-
-// Logout
 document.getElementById('logoutButton').addEventListener('click', async() => {
     await auth.signOut();
 });
-
-// Toggle Dark Mode
 document.getElementById('toggleDarkMode').addEventListener('click', () => {
     document.body.classList.toggle('dark-mode');
 });
-
-// Links
 document.getElementById('showRegisterLink').addEventListener('click', e => {
     e.preventDefault();
     showContainer('registerScreen');
@@ -448,7 +374,6 @@ document.getElementById('showLoginLink').addEventListener('click', e => {
     showContainer('loginScreen');
 });
 </script>
-
 <footer><p>&copy; 2023 Atlantis Academy. All rights reserved.</p></footer>
 </body>
 </html>
