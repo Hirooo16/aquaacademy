@@ -436,9 +436,9 @@ document.getElementById('registerButton').addEventListener('click', async() => {
     showLoading();
     try {
         const userCred = await auth.createUserWithEmailAndPassword(email, password);
-        const uid = userCred.user.uid;
 
-        await db.ref('users/' + uid).set({
+        // Simpan ke database
+        await db.ref('users/' + userCred.user.uid).set({
             name,
             email,
             education_level: educationLevel,
@@ -446,8 +446,7 @@ document.getElementById('registerButton').addEventListener('click', async() => {
             total_score: 0
         });
 
-        await userCred.user.sendEmailVerification();
-        alert("Registration successful! Check your email for verification.");
+        alert("Registration successful!");
         showContainer('loginScreen');
     } catch(error) {
         document.getElementById('registerError').innerText = error.message;
@@ -459,12 +458,6 @@ document.getElementById('registerButton').addEventListener('click', async() => {
 // =================== AUTH STATE CHANGED ===================
 auth.onAuthStateChanged(user => {
     if (user) {
-        if (!user.emailVerified) {
-            alert("Please verify your email first. Check your inbox.");
-            auth.signOut();
-            return;
-        }
-
         showLoading();
         db.ref('users/' + user.uid).once('value')
             .then(snapshot => {
@@ -485,8 +478,6 @@ auth.onAuthStateChanged(user => {
         showContainer('loginScreen');
     }
 });
-
-
 // =================== UTILITY LOADS ===================
 function loadProfile() {
     document.getElementById('profileInfo').innerHTML = `
