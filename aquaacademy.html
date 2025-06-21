@@ -94,9 +94,21 @@ footer { text-align:center; padding:10px; background:#00796b; color:#fff; positi
         </ul>
     </div>
     <div id="exercisesPage" class="container">
-        <h3>Exercises</h3>
-        <div id="questionsContainer"></div>
+    <h3>Exercises</h3>
+    <div id="subjectSelector">
+        <select id="subjectSelect">
+            <option value="">Pilih Mata Pelajaran</option>
+            <option value="physics">Physics</option>
+            <option value="chemistry">Chemistry</option>
+            <option value="biology">Biology</option>
+            <option value="indonesian">Indonesian</option>
+            <option value="english">English</option>
+            <option value="math">Math</option>
+        </select>
+        <button id="startExercise">Mulai</button>
     </div>
+    <div id="questionDisplay"></div>
+</div>
     <div id="leaderboardsPage" class="container">
         <h3>Leaderboards</h3>
         <div id="allLeaderboards"></div>
@@ -117,6 +129,90 @@ const firebaseConfig = {
     appId: "1:144074668480:web:a26bbacfa551112b15f025"
 };
 firebase.initializeApp(firebaseConfig);
+
+
+    // ====================================================
+// LOGIC UNTUK EXERCISES
+// ====================================================
+let selectedSubject = '';
+let currentQuestionIndex = 0;
+let userScore = 0;
+
+const subjectSelect = document.getElementById('subjectSelect');
+const startExerciseButton = document.getElementById('startExercise');
+const questionDisplay = document.getElementById('questionDisplay');
+
+startExerciseButton.addEventListener('click', async() => {
+    selectedSubject = subjectSelect.value;
+    if (!selectedSubject) {
+        alert('Pilih mata pelajaran dulu!');
+        return;
+    }
+    if (!questions[currentUser.education_level][selectedSubject]) {
+        alert('Maaf, belum ada soal untuk mata pelajaran ini!');
+        return;
+    }
+    if (confirm(`Kamu siap menjawab soal ${selectedSubject}?`)) {
+        // Reset state soal
+        currentQuestionIndex = 0;
+        userScore = 0;
+
+        // Mulai soal
+        showNextQuestion();
+    }
+});
+
+function showNextQuestion() {
+    const subjectQuestions = questions[currentUser.education_level][selectedSubject];
+    if (currentQuestionIndex >= Math.min(10, subjectQuestions.length)) {
+        // Sudah selesai
+        endExercise();
+        return;
+    }
+
+    const qObj = subjectQuestions[currentQuestionIndex];
+    questionDisplay.innerHTML = `
+        <p>${currentQuestionIndex + 1}. ${qObj.q}</p>
+        ${qObj.options.map(opt =>
+            `<button class="optionBtn" data-answer="${qObj.answer}">${opt}</button>`).join('')}
+    `;
+
+    // Event click jawaban
+    document.querySelectorAll('.optionBtn').forEach(button => {
+        button.addEventListener('click', e => {
+            const correctAnswer = e.target.getAttribute('data-answer');
+            const selected = e.target.textContent.trim();
+            if (selected === correctAnswer) {
+                alert("Correct!");
+                userScore += 1;
+            } else {
+                alert("Wrong Answer.");
+            }
+            currentQuestionIndex++;
+            showNextQuestion();
+        });
+    });
+}
+
+async function endExercise() {
+    alert(`Kamu selesai! Skor kamu: ${userScore}/${Math.min(10, questions[currentUser.education_level][selectedSubject].length)}`);
+    // Simpan Skor
+    await db.ref(`users/${currentUser.uid}/points/${selectedSubject}`)
+        .transaction(val => (val || 0) + userScore);
+    await db.ref(`users/${currentUser.uid}/total_score`)
+        .transaction(val => (val || 0) + userScore);
+
+    // Refresh Profil
+    alert("Skor kamu berhasil disimpan!");
+    // Muat ulang data
+    db.ref('users/' + currentUser.uid).once('value').then(snapshot => {
+        currentUser = snapshot.val();
+        currentUser.uid = auth.currentUser.uid;
+        loadProfile();
+    });
+    // Kosongkan Tampilan
+    questionDisplay.innerHTML = '';
+}
 
 // Soal disimpan DI SINI!
 const questions = {
