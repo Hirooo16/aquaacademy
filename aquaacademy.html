@@ -287,11 +287,79 @@ let userScore = 0;
 
 const questions = {
     SD: {
-        physics: [{q: "Contoh soal Fisika SD?", options: ["A", "B", "C", "D"], answer: "A"}],
-        chemistry: [{q: "Contoh soal Kimia SD?", options: ["A", "B", "C", "D"], answer: "B"}]
+        questions.SD.physics = [
+            {q: "Benda yang dapat menghantarkan listrik disebut?", options: ["Isolator", "Konduktor", "Gas", "Cairan"], answer: "Konduktor"},
+            {q: "Gaya gravitasi membuat benda bergerak ke arah?", options: ["Atas", "Bawah", "Kanan", "Kiri"], answer: "Bawah"},
+            {q: "Energi dari matahari disebut energi?", options: ["Kinetik", "Panas", "Bunyi", "Listrik"], answer: "Panas"},
+            {q: "Alat untuk mengukur suhu disebut?", options: ["Penggaris", "Termometer", "Neraca", "Mikroskop"], answer: "Termometer"},
+            {q: "Benda yang dapat berubah bentuk jika ditekan disebut?", options: ["Benda Keras", "Benda Lentur", "Benda Padat", "Benda Cair"], answer: "Benda Lentur"},
+            {q: "Saat bola dilempar ke atas, bola bergerak karena?", options: ["Energi Kinetik", "Energi Panas", "Energi Listrik", "Energi Bunyi"], answer: "Energi Kinetik"},
+            {q: "Benda dapat bergerak karena dikenai?", options: ["Gaya", "Panas", "Bunyi", "Cahaya"], answer: "Gaya"},
+            {q: "Saat lampu menyala, energi listrik berubah menjadi energi?", options: ["Panas dan Cahaya", "Kinetik", "Bunyi", "Kimia"], answer: "Panas dan Cahaya"},
+            {q: "Saat sepeda dikayuh, energi yang digunakan adalah?", options: ["Energi Kimia", "Energi Bunyi", "Energi Kinetik", "Energi Listrik"], answer: "Energi Kinetik"},
+            {q: "Saat benda dijatuhkan dari ketinggian, energi berubah dari?", options: ["Kinetik ke Potensial", "Potensial ke Kinetik", "Listrik ke Panas", "Kimia ke Bunyi"], answer: "Potensial ke Kinetik"},
+            {q: "Saat mobil direm, energi kinetik berubah menjadi?", options: ["Energi Panas", "Energi Listrik", "Energi Kimia", "Energi Suara"], answer: "Energi Panas"},
+            {q: "Saat lampu senter dinyalakan, energi kimia dari baterai berubah menjadi energi?", options: ["Cahaya dan Panas", "Kinetik dan Suara", "Bunyi dan Gerak", "Panas dan Kinetik"], answer: "Cahaya dan Panas"},
+            {q: "Saat bola menggelinding, bola memiliki energi?", options: ["Kinetik", "Panas", "Bunyi", "Listrik"], answer: "Kinetik"},
+            {q: "Energi yang digunakan untuk memindahkan benda disebut?", options: ["Energi Gerak", "Energi Panas", "Energi Cahaya", "Energi Kimia"], answer: "Energi Gerak"},
+            {q: "Saat air mendidih, energi panas berubah menjadi energi?", options: ["Energi Bunyi", "Energi Gerak", "Energi Listrik", "Energi Kimia"], answer: "Energi Gerak"},
+            {q: "Saat benda bergerak dari tinggi ke rendah, energi potensial berubah menjadi?", options: ["Energi Kinetik", "Energi Bunyi", "Energi Panas", "Energi Listrik"], answer: "Energi Kinetik"},
+            {q: "Saat benda dilemparkan, energi awal yang digunakan disebut?", options: ["Energi Awal", "Energi Kinetik", "Energi Dorong", "Energi Gerak"], answer: "Energi Dorong"},
+            {q: "Saat lampu dimatikan, energi listrik berhenti berubah menjadi?", options: ["Cahaya dan Panas", "Kinetik dan Bunyi", "Panas dan Suara", "Kimia dan Listrik"], answer: "Cahaya dan Panas"},
+            {q: "Saat bola memantul, energi kinetik berubah sebagian menjadi energi?", options: ["Energi Bunyi dan Panas", "Energi Kimia", "Energi Listrik", "Energi Cahaya"], answer: "Energi Bunyi dan Panas"},
+            {q: "Saat sebuah benda berada di tempat tinggi, energi yang dimilikinya disebut?", options: ["Energi Kinetik", "Energi Potensial", "Energi Bunyi", "Energi Panas"], answer: "Energi Potensial"}
+          ],
+        questions.SD.chemistry = [
+            {q: "Air termasuk contoh zat berwujud?", options: ["Padat", "Cair", "Gas", "Api"], answer: "Cair"},
+            {q: "Contoh perubahan wujud dari cair ke gas disebut?", options: ["Mengembun", "Menguap", "Menyublim", "Meleleh"], answer: "Menguap"},
+            {q: "Bahan yang dapat menghantarkan panas disebut?", options: ["Konduktor", "Isolator", "Plastik", "Karet"], answer: "Konduktor"},
+            {q: "Gas yang digunakan tumbuhan untuk fotosintesis?", options: ["Oksigen", "Hidrogen", "Karbondioksida", "Nitrogen"], answer: "Karbondioksida"},
+            {q: "Contoh zat asam dalam rumah tangga?", options: ["Gula", "Garam", "Cuka", "Sabun"], answer: "Cuka"},
+            {q: "Contoh benda padat adalah?", options: ["Air", "Batu", "Minyak", "Uap"], answer: "Batu"},
+            {q: "Saat es dipanaskan, berubah menjadi?", options: ["Air", "Gas", "Padat", "Asap"], answer: "Air"},
+            {q: "Saat air dipanaskan terus-menerus berubah menjadi?", options: ["Gas", "Padat", "Cair", "Keras"], answer: "Gas"},
+            {q: "Contoh zat cair?", options: ["Air", "Besi", "Kaca", "Batu"], answer: "Air"},
+            {q: "Benda yang dapat menyala disebut?", options: ["Konduktor", "Isolator", "Bahan Bakar", "Plastik"], answer: "Bahan Bakar"},
+            {q: "Contoh bahan bakar dari fosil?", options: ["Bensin", "Garam", "Pasir", "Gula"], answer: "Bensin"},
+            {q: "Saat lilin terbakar, terjadi perubahan dari?", options: ["Padat ke Gas", "Gas ke Cair", "Cair ke Padat", "Gas ke Padat"], answer: "Padat ke Gas"},
+            {q: "Contoh perubahan kimia?", options: ["Besi Berkarat", "Air Membeku", "Es Mencair", "Kertas Digunting"], answer: "Besi Berkarat"},
+            {q: "Contoh perubahan fisika?", options: ["Es Mencair", "Besi Berkarat", "Kue Matang", "Buah Membusuk"], answer: "Es Mencair"},
+            {q: "Saat air direbus, perubahan yang terjadi?", options: ["Cair ke Gas", "Gas ke Padat", "Padat ke Gas", "Gas ke Cair"], answer: "Cair ke Gas"},
+            {q: "Saat kapur barus diletakkan, lama‑lama berubah dari padat menjadi?", options: ["Gas", "Cair", "Beku", "Keras"], answer: "Gas"},
+            {q: "Contoh zat asam alami?", options: ["Jeruk", "Nasi", "Gula", "Garam"], answer: "Jeruk"},
+            {q: "Saat kayu dibakar, energi kimia berubah menjadi?", options: ["Energi Panas dan Cahaya", "Energi Gerak", "Energi Listrik", "Energi Suara"], answer: "Energi Panas dan Cahaya"},
+            {q: "Saat membuat es batu, air berubah dari?", options: ["Cair ke Padat", "Padat ke Gas", "Gas ke Cair", "Cair ke Gas"], answer: "Cair ke Padat"},
+            {q: "Saat membuat teh, air panas digunakan untuk?", options: ["Melarutkan teh dan gula", "Mengubah teh menjadi padat", "Membekukan air", "Menguapkan air"], answer: "Melarutkan teh dan gula"}
+          ],
     },
     SMP: {
-        physics: [{q: "Contoh soal Fisika SMP?", options: ["A", "B", "C", "D"], answer: "A"}]
+        questions.SMP.physics = [
+          {q: "Benda yang dapat menghantarkan listrik disebut?", options: ["Isolator", "Konduktor", "Gas", "Cairan"], answer: "Konduktor"},
+          {q: "Gaya gravitasi membuat benda bergerak ke arah?", options: ["Atas", "Bawah", "Kanan", "Kiri"], answer: "Bawah"},
+          {q: "Energi dari matahari disebut energi?", options: ["Kinetik", "Panas", "Bunyi", "Listrik"], answer: "Panas"},
+          {q: "Alat untuk mengukur suhu disebut?", options: ["Penggaris", "Termometer", "Neraca", "Mikroskop"], answer: "Termometer"},
+          {q: "Benda yang dapat berubah bentuk jika ditekan disebut?", options: ["Benda Keras", "Benda Lentur", "Benda Padat", "Benda Cair"], answer: "Benda Lentur"},
+          {q: "Besaran yang dapat diukur disebut?", options: ["Besaran Pokok", "Besaran Turunan", "Besaran Vektor", "Besaran Skalar"], answer: "Besaran Pokok"},
+          {q: "Contoh besaran pokok adalah?", options: ["Massa", "Volume", "Kecepatan", "Gaya"], answer: "Massa"},
+          {q: "Besaran turunan terdiri dari?", options: ["Panjang", "Suhu", "Kecepatan", "Massa"], answer: "Kecepatan"},
+          {q: "Satuan SI untuk panjang adalah?", options: ["Gram", "Meter", "Detik", "Kelvin"], answer: "Meter"},
+          {q: "Besaran yang memiliki nilai dan arah disebut?", options: ["Besaran Skalar", "Besaran Vektor", "Besaran Pokok", "Besaran Ukuran"], answer: "Besaran Vektor"},
+          {q: "Gaya yang dapat mengubah bentuk benda disebut?", options: ["Gaya Otot", "Gaya Pegas", "Gaya Kontak", "Gaya Gesek"], answer: "Gaya Kontak"},
+          {q: "Contoh energi kinetik terdapat pada?", options: ["Bola Diam", "Bola Berputar", "Meja", "Buku di Rak"], answer: "Bola Berputar"},
+          {q: "Energi yang dimiliki benda karena kedudukannya disebut?", options: ["Energi Kinetik", "Energi Potensial", "Energi Listrik", "Energi Kimia"], answer: "Energi Potensial"},
+          {q: "Besaran yang dapat berubah seiring waktu disebut?", options: ["Besaran Skalar", "Besaran Tetap", "Besaran Vektor", "Besaran Kontinu"], answer: "Besaran Kontinu"},
+          {q: "Hukum Newton I disebut juga dengan hukum?", options: ["Kelembaman", "Akselerasi", "Gravitasi", "Kekekalan Energi"], answer: "Kelembaman"},
+          {q: "Gaya total yang bekerja pada benda disebut?", options: ["Resultan Gaya", "Gaya Kontak", "Gaya Normal", "Gaya Gesek"], answer: "Resultan Gaya"},
+          {q: "Satuan SI untuk gaya adalah?", options: ["Newton", "Joule", "Pascal", "Kelvin"], answer: "Newton"},
+          {q: "Besaran yang tidak mempunyai arah disebut?", options: ["Besaran Vektor", "Besaran Skalar", "Besaran Kontinu", "Besaran Fisika"], answer: "Besaran Skalar"},
+          {q: "Saat gaya total nol, maka benda bergerak dengan?", options: ["Percepatan tetap", "Kecepatan tetap", "Berlokasi", "Mengalami percepatan"], answer: "Kecepatan tetap"},
+          {q: "Saat benda bergerak dipercepat, maka gaya totalnya?", options: ["Nol", "Searah dengan percepatan", "Berlawanan dengan percepatan", "Tidak berubah"], answer: "Searah dengan percepatan"},
+          {q: "Besaran panjang dapat diukur dengan alat?", options: ["Neraca", "Jangka sorong", "Stopwatch", "Termometer"], answer: "Jangka sorong"},
+          {q: "Besaran waktu dapat diukur dengan alat?", options: ["Neraca", "Stopwatch", "Amperemeter", "Voltmeter"], answer: "Stopwatch"},
+          {q: "Besaran suhu dapat diukur dengan alat?", options: ["Stopwatch", "Neraca", "Amperemeter", "Termometer"], answer: "Termometer"},
+          {q: "Contoh gaya tak sentuh adalah?", options: ["Gaya Gesek", "Gaya Pegas", "Gaya Gravitasi", "Gaya Otot"], answer: "Gaya Gravitasi"},
+          {q: "Saat resultan gaya = 0, benda berada dalam keadaan?", options: ["Seimbang", "Berakselerasi", "Jatuh", "Menggelinding"], answer: "Seimbang"}
+        ];
     },
     SMA: {
         physics: [{q: "Contoh soal Fisika SMA?", options: ["A", "B", "C", "D"], answer: "B"}]
