@@ -400,6 +400,8 @@ async function endExercise() {
         currentUser = snapshot.val();
         currentUser.uid = auth.currentUser.uid;
         loadProfile();
+        loadLeaderboards(); // Tambahkan ini agar leaderboard langsung update
+
     });
     questionDisplay.innerHTML = '';
 }
