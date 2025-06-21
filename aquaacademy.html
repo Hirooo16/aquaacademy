@@ -708,7 +708,6 @@ const questions = {
   }
 };
 
-
 // Real-time listener untuk leaderboard
 db.ref('users').on('value', snapshot => {
     loadLeaderboards(); // Panggil fungsi untuk memuat leaderboard setiap kali data berubah
@@ -811,7 +810,7 @@ document.getElementById('loginButton').addEventListener('click', async() => {
     const email = document.getElementById('loginEmail').value.trim();
     const password = document.getElementById('loginPassword').value.trim();
     if (!email.endsWith('@atlantis.student.com')) {
-        document.getElementById('loginError').innerText = "Email must be atlantis.student.com.";
+        document.getElementById('loginError').innerText = "Email harus berakhiran @atlantis.student.com.";
         return;
     }
     showLoading();
@@ -832,7 +831,7 @@ document.getElementById('registerButton').addEventListener('click', async() => {
     const confirmPassword = document.getElementById('confirmPassword').value.trim();
 
     if (!name || !email.endsWith('@atlantis.student.com') || !educationLevel || password.length < 6 || password !== confirmPassword) {
-        document.getElementById('registerError').innerText = "Check all fields and match passwords.";
+        document.getElementById('registerError').innerText = "Periksa semua kolom dan pastikan kata sandi cocok.";
         return;
     }
 
@@ -849,7 +848,7 @@ document.getElementById('registerButton').addEventListener('click', async() => {
             total_score: 0
         });
 
-        alert("Registration successful!");
+        alert("Pendaftaran berhasil!");
         showContainer('loginScreen');
     } catch(error) {
         document.getElementById('registerError').innerText = error.message;
@@ -872,7 +871,7 @@ auth.onAuthStateChanged(user => {
                     loadLeaderboards();
                     showContainer('dashboard');
                 } else {
-                    alert("User  data not found. Please register again.");
+                    alert("Data pengguna tidak ditemukan. Silakan daftar lagi.");
                     auth.signOut();
                 }
             })
@@ -885,18 +884,18 @@ auth.onAuthStateChanged(user => {
 // =================== UTILITAS MUAT ===================
 function loadProfile() {
     document.getElementById('profileInfo').innerHTML = `
-        <p>Name: ${currentUser .name}</p>
+        <p>Nama: ${currentUser .name}</p>
         <p>Email: ${currentUser .email}</p>
-        <p>Education Level: ${currentUser .education_level}</p>
-        <p>Points:
-            Physics: ${currentUser .points.physics || 0},
-            Chemistry: ${currentUser .points.chemistry || 0},
-            Biology: ${currentUser .points.biology || 0},
-            Indonesian: ${currentUser .points.indonesian || 0},
-            English: ${currentUser .points.english || 0},
-            Math: ${currentUser .points.math || 0}
+        <p>Tingkat Pendidikan: ${currentUser .education_level}</p>
+        <p>Poin:
+            Fisika: ${currentUser .points.physics || 0},
+            Kimia: ${currentUser .points.chemistry || 0},
+            Biologi: ${currentUser .points.biology || 0},
+            Bahasa Indonesia: ${currentUser .points.indonesian || 0},
+            Bahasa Inggris: ${currentUser .points.english || 0},
+            Matematika: ${currentUser .points.math || 0}
         </p>
-        <p>Total Score: ${currentUser .total_score}</p>`;
+        <p>Total Skor: ${currentUser .total_score}</p>`;
 }
 
 function loadLeaderboards() {
@@ -959,11 +958,11 @@ document.querySelectorAll('nav button[data-page]').forEach(button => {
 });
 
 document.getElementById('changePasswordButton').addEventListener('click', async() => {
-    const newPass = prompt("Enter new password:");
+    const newPass = prompt("Masukkan kata sandi baru:");
     if(newPass) {
         try {
             await auth.currentUser .updatePassword(newPass);
-            alert("Password updated!");
+            alert("Kata sandi diperbarui!");
         } catch(error) {
             alert(error.message);
         }
