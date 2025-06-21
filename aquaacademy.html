@@ -1,230 +1,356 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Aqua Academy</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
-<style>
-.gradient-bg {
-  background: linear-gradient(135deg, #00b4db, #0083b0);
-}
-.card-hover {
-  transition: all 0.3s ease;
-}
-.card-hover:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 20px rgba(0,0,0,.1);
-}
-.tab-content { display: none; }
-.tab-content.active { display: block; animation: fadeIn .5s; }
-@keyframes fadeIn {
-  from { opacity:0 } to { opacity:1 }
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atlantis Academy</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #e0f7fa;
+            color: #00796b;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+        }
+        .container {
+            width: 90%;
+            max-width: 600px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            display: none;
+        }
+        .active {
+            display: block;
+        }
+        h2 {
+            text-align: center;
+            color: #00796b;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #00796b;
+            border-radius: 5px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #00796b;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #004d40;
+        }
+        .link {
+            text-align: center;
+            margin-top: 10px;
+        }
+        .link a {
+            color: #00796b;
+            text-decoration: none;
+        }
+        .link a:hover {
+            text-decoration: underline;
+        }
+        .leaderboard, .exercise {
+            margin-top: 20px;
+            padding: 10px;
+            background: #f1f1f1;
+            border-radius: 5px;
+        }
+        .exercise button {
+            margin: 5px 0;
+        }
+        .error {
+            color: red;
+            font-size: 0.9em;
+            margin-top: -10px;
+            margin-bottom: 10px;
+        }
+    </style>
+    <script src="https://www.gstatic.com/firebasejs/9.1.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.1.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.1.0/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.1.0/firebase-analytics.js"></script>
 </head>
-<body class="font-sans bg-gray-50">
+<body>
 
-<!-- AUTH SCREENS -->
-<div id="auth-screen" class="gradient-bg min-h-screen flex items-center justify-center p-4">
-  <div class="bg-white rounded-xl shadow-2xl p-8 w-full max-w-md">
-    <div class="text-center mb-8">
-      <h1 class="text-3xl font-bold text-gray-800">Aqua Academy</h1>
-      <p class="text-gray-600 mt-2">Belajar interaktif dengan sistem leaderboard</p>
+    <div id="login" class="container active">
+        <h2>Login</h2>
+        <input type="email" id="loginEmail" placeholder="Email (@atlantis.student.com)" required>
+        <div class="error" id="loginError"></div>
+        <input type="password" id="loginPassword" placeholder="Password" required>
+        <button onclick="login()">Login</button>
+        <div class="link">Don't have an account? <a href="#" onclick="showRegister()">Register here</a></div>
     </div>
-    <div id="auth-tabs" class="mb-6 flex border-b">
-      <button class="tab-btn py-2 px-4 font-medium text-blue-600 border-b-2 border-blue-600" data-tab="login">Login</button>
-      <button class="tab-btn py-2 px-4 font-medium text-gray-500" data-tab="register">Register</button>
+
+    <div id="register" class="container">
+        <h2>Register</h2>
+        <input type="text" id="name" placeholder="Name" required>
+        <div class="error" id="registerNameError"></div>
+        <input type="email" id="registerEmail" placeholder="Email (@atlantis.student.com)" required>
+        <div class="error" id="registerEmailError"></div>
+        <select id="educationLevel" required>
+            <option value="">Select Education Level</option>
+            <option value="SD">SD</option>
+            <option value="SMP">SMP</option>
+            <option value="SMA">SMA</option>
+        </select>
+        <div class="error" id="registerLevelError"></div>
+        <input type="password" id="registerPassword" placeholder="Password" required>
+        <div class="error" id="registerPasswordError"></div>
+        <input type="password" id="confirmPassword" placeholder="Confirm Password" required>
+        <div class="error" id="confirmPasswordError"></div>
+        <button onclick="register()">Register</button>
+        <div class="link">Already have an account? <a href="#" onclick="showLogin()">Back to Login</a></div>
     </div>
-    <div id="login-form" class="tab-content active">
-      <form id="loginForm" class="space-y-4">
-        <div><label>Email</label><input id="login-email" type="email" required class="w-full px-3 py-2 border rounded"/></div>
-        <div><label>Password</label><input id="login-password" type="password" required class="w-full px-3 py-2 border rounded"/></div>
-        <div><button type="submit" class="w-full py-2 rounded text-white bg-blue-600 hover:bg-blue-700">Login</button></div>
-      </form>
+
+    <div id="dashboard" class="container">
+        <h2>Main Dashboard</h2>
+        <div id="userInfo"></div>
+        <div class="exercise" id="exerciseSection"></div>
+        <button onclick="changePassword()">Change Password</button>
+        <button onclick="logout()">Logout</button>
+        <div class="leaderboard" id="leaderboard"></div>
     </div>
-    <div id="register-form" class="tab-content">
-      <form id="registerForm" class="space-y-4">
-        <div><label>Email</label><input id="register-email" required type="email" class="w-full px-3 py-2 border rounded"/></div>
-        <div><label>Password</label><input id="register-password" required type="password" class="w-full px-3 py-2 border rounded"/></div>
-        <div><label>Confirm Password</label><input id="register-confirm" required type="password" class="w-full px-3 py-2 border rounded"/></div>
-        <div><button type="submit" class="w-full py-2 rounded text-white bg-blue-600 hover:bg-blue-700">Register</button></div>
-      </form>
-    </div>
-    <div id="auth-message" class="mt-4 text-center text-sm text-gray-600"></div>
-  </div>
-</div>
 
-<!-- DASHBOARD -->
-<div id="dashboard" class="hidden">
-<header class="gradient-bg text-white shadow-lg">
-  <div class="container mx-auto px-4 py-4 flex justify-between items-center">
-    <h1 class="text-xl font-bold">Aqua Academy</h1>
-    <div class="flex items-center space-x-4">
-      <span id="user-email" class="text-sm"></span>
-      <button id="logout-btn" class="bg-white text-blue-600 px-3 py-1 rounded hover:bg-gray-100">Logout</button>
-    </div>
-  </div>
-</header>
-<main class="container mx-auto px-4 py-8">
-  <h2 class="text-2xl font-bold">Selamat Datang di Aqua Academy</h2>
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-4">
-    <div class="card-hover bg-white rounded-xl p-6">
-      <h3 class="font-semibold">SD (Sekolah Dasar)</h3><p class="text-gray-600">Materi pembelajaran untuk SD</p>
-      <button class="select-level-btn w-full mt-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700" data-level="sd">Pilih Jenjang</button>
-    </div>
-    <div class="card-hover bg-white rounded-xl p-6">
-      <h3 class="font-semibold">SMP</h3><p class="text-gray-600">Materi pembelajaran untuk SMP</p>
-      <button class="select-level-btn w-full mt-4 py-2 rounded bg-green-600 text-white hover:bg-green-700" data-level="smp">Pilih Jenjang</button>
-    </div>
-    <div class="card-hover bg-white rounded-xl p-6">
-      <h3 class="font-semibold">SMA</h3><p class="text-gray-600">Materi pembelajaran untuk SMA</p>
-      <button class="select-level-btn w-full mt-4 py-2 rounded bg-purple-600 text-white hover:bg-purple-700" data-level="sma">Pilih Jenjang</button>
-    </div>
-  </div>
-  <div id="level-content" class="hidden mt-8">
-    <div class="flex space-x-4 border-b">
-      <button class="level-tab font-medium text-blue-600 border-b-2 border-blue-600" data-tab="materi">Materi</button>
-      <button class="level-tab font-medium text-gray-500" data-tab="soal">Soal</button>
-      <button class="level-tab font-medium text-gray-500" data-tab="leaderboard">Leaderboard</button>
-      <button class="level-tab font-medium text-gray-500" data-tab="diskusi">Diskusi</button>
-    </div>
-    <div id="materi-tab" class="tab-content active p-4">Konten Materi (Dummy)</div>
-    <div id="soal-tab" class="tab-content p-4">Konten Soal (Dummy)</div>
-    <div id="leaderboard-tab" class="tab-content p-4">Konten Leaderboard (Dummy)</div>
-    <div id="diskusi-tab" class="tab-content p-4">
-      <div id="chat-messages" class="bg-gray-100 rounded p-3 h-64 overflow-y-auto"></div>
-      <div class="flex mt-2">
-        <input id="chat-input" class="flex-1 rounded-l border p-2" placeholder="Ketik pesan...">
-        <button id="send-btn" class="bg-blue-600 text-white rounded-r px-3">Kirim</button>
-      </div>
-    </div>
-  </div>
-</main>
-</div>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyDR04p3qXOTTOp9OEwz-m-M46j5x2FKuKM",
+            authDomain: "dungeon-223d9.firebaseapp.com",
+            databaseURL: "https://dungeon-223d9-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "dungeon-223d9",
+            storageBucket: "dungeon-223d9.firebasestorage.app",
+            messagingSenderId: "144074668480",
+            appId: "1:144074668480:web:a26bbacfa551112b15f025",
+            measurementId: "G-H4TYZ2Y5RQ"
+        };
 
-<!-- JAVASCRIPT STARTS HERE -->
-<script>
-/** CONFIGURE YOUR FIREBASE HERE **/
-const firebaseConfig = {
-  apiKey: "ISI_DENGAN_API_KEY",
-  authDomain: "ISI_DENGAN_AUTH_DOMAIN",
-  databaseURL: "ISI_DENGAN_DATABASE_URL",
-  projectId: "ISI_DENGAN_PROJECT_ID",
-  storageBucket: "ISI_DENGAN_STORAGE_BUCKET",
-  messagingSenderId: "ISI_DENGAN_MESSAGING_SENDER_ID",
-  appId: "ISI_DENGAN_APP_ID"
-};
-firebase.initializeApp(firebaseConfig);
+        // Initialize Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const analytics = firebase.getAnalytics(app);
+        const auth = firebase.auth();
+        const database = firebase.database();
 
-// Elements
-const authScreen = document.getElementById("auth-screen");
-const dashboard = document.getElementById("dashboard");
-const authMessage = document.getElementById("auth-message");
+        // Show login screen
+        function showLogin() {
+            clearErrors();
+            document.getElementById('login').classList.add('active');
+            document.getElementById('register').classList.remove('active');
+            document.getElementById('dashboard').classList.remove('active');
+        }
 
-const loginForm = document.getElementById("loginForm");
-const registerForm = document.getElementById("registerForm");
+        // Show registration screen
+        function showRegister() {
+            clearErrors();
+            document.getElementById('register').classList.add('active');
+            document.getElementById('login').classList.remove('active');
+            document.getElementById('dashboard').classList.remove('active');
+        }
 
-const logoutBtn = document.getElementById("logout-btn");
-const userEmailDisplay = document.getElementById("user-email");
+        // Clear error messages
+        function clearErrors() {
+            document.querySelectorAll('.error').forEach(el => el.innerHTML = '');
+        }
 
-const tabBtns = document.querySelectorAll('#auth-tabs .tab-btn');
-const authTabs = {
-  login: document.getElementById("login-form"),
-  register: document.getElementById("register-form")
-};
-tabBtns.forEach(b =>
-  b.addEventListener("click", e => {
-    const tab = e.target.dataset.tab;
-    tabBtns.forEach(btn => {
-      btn.classList.toggle("border-b-2", btn.dataset.tab === tab);
-      btn.classList.toggle("text-blue-600", btn.dataset.tab === tab);
-      btn.classList.toggle("text-gray-500", btn.dataset.tab !== tab);
-    });
-    for (const key in authTabs) {
-      authTabs[key].classList.toggle("active", key === tab);
-    }
-  })
-);
+        // Show dashboard
+        function showDashboard(user) {
+            document.getElementById('userInfo').innerHTML = `
+                <p>Name: ${user.name}</p>
+                <p>Email: ${user.email}</p>
+                <p>Education Level: ${user.education_level}</p>
+                <p>Points: ${user.total_score}</p>
+            `;
+            loadExercises(user.education_level);
+            loadLeaderboard();
+            document.getElementById('dashboard').classList.add('active');
+            document.getElementById('login').classList.remove('active');
+            document.getElementById('register').classList.remove('active');
+        }
 
-// Auth Logic
-loginForm.addEventListener("submit", async e => {
-  e.preventDefault();
-  const email = document.getElementById("login-email").value;
-  const password = document.getElementById("login-password").value;
-  try {
-    await firebase.auth().signInWithEmailAndPassword(email, password);
-  } catch (error) {
-    authMessage.textContent = error.message;
-  }
-});
-registerForm.addEventListener("submit", async e => {
-  e.preventDefault();
-  const email = document.getElementById("register-email").value;
-  const password = document.getElementById("register-password").value;
-  const confirm = document.getElementById("register-confirm").value;
-  if (password !== confirm) {
-    authMessage.textContent = "Password tidak cocok.";
-    return;
-  }
-  try {
-    await firebase.auth().createUserWithEmailAndPassword(email, password);
-  } catch (error) {
-    authMessage.textContent = error.message;
-  }
-});
-firebase.auth().onAuthStateChanged(user => {
-  if (user) {
-    authScreen.classList.add("hidden");
-    dashboard.classList.remove("hidden");
-    userEmailDisplay.textContent = user.email;
-  } else {
-    authScreen.classList.remove("hidden");
-    dashboard.classList.add("hidden");
-  }
-});
-logoutBtn.addEventListener("click", async () => {
-  await firebase.auth().signOut();
-});
+        // Load exercises based on education level
+        function loadExercises(educationLevel) {
+            const exercises = {
+                SD: [
+                    { question: "What is 2 + 2?", options: ["3", "4", "5"], answer: "4" },
+                    { question: "What is the capital of Indonesia?", options: ["Jakarta", "Bali", "Bandung"], answer: "Jakarta" }
+                ],
+                SMP: [
+                    { question: "What is Newton’s second law?", options: ["F=ma", "E=mc^2", "a^2+b^2=c^2"], answer: "F=ma" },
+                    { question: "What is the chemical symbol for water?", options: ["H2O", "O2", "CO2"], answer: "H2O" }
+                ],
+                SMA: [
+                    { question: "What is the powerhouse of the cell?", options: ["Mitochondria", "Nucleus", "Ribosome"], answer: "Mitochondria" },
+                    { question: "What is the antonym of 'besar'?", options: ["Kecil", "Sedang", "Besar"], answer: "Kecil" }
+                ]
+            };
 
-// Dashboard Logic
-const selectLevelButtons = document.querySelectorAll(".select-level-btn");
-const levelContent = document.getElementById("level-content");
-selectLevelButtons.forEach(button =>
-  button.addEventListener("click", e => {
-    levelContent.classList.remove("hidden");
-  })
-);
+            const selectedExercises = exercises[educationLevel] || [];
+            let exerciseHTML = '<h3>Exercises</h3>';
+            selectedExercises.forEach((exercise, index) => {
+                exerciseHTML += `
+                    <div>
+                        <p>${index + 1}. ${exercise.question}</p>
+                        ${exercise.options.map(option => `
+                            <button onclick="submitAnswer('${exercise.answer}', '${option}')">${option}</button>
+                        `).join('')}
+                    </div>
+                `;
+            });
+            document.getElementById('exerciseSection').innerHTML = exerciseHTML;
+        }
 
-// Level Tabs
-const levelTabs = document.querySelectorAll(".level-tab");
-levelTabs.forEach(tab =>
-  tab.addEventListener("click", e => {
-    const selected = e.target.dataset.tab;
-    levelTabs.forEach(t =>
-      t.classList.toggle("text-blue-600", t.dataset.tab === selected) );
-    document.querySelectorAll('#level-content .tab-content')
-      .forEach(content =>
-        content.classList.toggle("active", content.id === selected + '-tab')
-      );
-  })
-);
+        // Submit answer and update points
+        function submitAnswer(correctAnswer, selectedAnswer) {
+            if (correctAnswer === selectedAnswer) {
+                alert("Correct answer!");
+                const userId = auth.currentUser .uid;
+                const subject = "math"; // Example subject, you can modify this based on the exercise
+                database.ref('users/' + userId + '/points/' + subject).transaction(points => (points || 0) + 1);
+                database.ref('users/' + userId + '/total_score').transaction(total => (total || 0) + 1);
+            } else {
+                alert("Wrong answer!");
+            }
+        }
 
-// Chat Dummy
-const chatMessages = document.getElementById("chat-messages");
-const chatInput = document.getElementById("chat-input");
-const sendBtn = document.getElementById("send-btn");
-sendBtn.addEventListener("click", () => {
-  if (chatInput.value.trim() === "") return;
-  const div = document.createElement("div");
-  div.textContent = chatInput.value.trim();
-  div.className = "bg-blue-100 p-2 rounded my-1";
-  chatMessages.appendChild(div);
-  chatInput.value = ""; 
-  chatMessages.scrollTop = chatMessages.scrollHeight;
-});
-</script>
+        // Load leaderboard
+        function loadLeaderboard() {
+            database.ref('leaderboards').once('value').then(snapshot => {
+                let leaderboardHTML = '<h3>Leaderboard</h3><ul>';
+                snapshot.forEach(childSnapshot => {
+                    const subject = childSnapshot.key;
+                    const scores = childSnapshot.val();
+                    leaderboardHTML += `<li>${subject}: ${JSON.stringify(scores)}</li>`;
+                });
+                leaderboardHTML += '</ul>';
+                document.getElementById('leaderboard').innerHTML = leaderboardHTML;
+            });
+        }
+
+        // Login function
+        function login() {
+            clearErrors();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            if (!email.endsWith('@atlantis.student.com')) {
+                document.getElementById('loginError').innerHTML = "Email must end with @atlantis.student.com.";
+                return;
+            }
+
+            auth.signInWithEmailAndPassword(email, password)
+                .then(userCredential => {
+                    const userId = userCredential.user.uid;
+                    return database.ref('users/' + userId).once('value');
+                })
+                .then(snapshot => {
+                    const user = snapshot.val();
+                    showDashboard(user);
+                })
+                .catch(error => {
+                    document.getElementById('loginError').innerHTML = error.message;
+                });
+        }
+
+        // Register function
+        function register() {
+            clearErrors();
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('registerEmail').value;
+            const educationLevel = document.getElementById('educationLevel').value;
+            const password = document.getElementById('registerPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            if (!name) {
+                document.getElementById('registerNameError').innerHTML = "Name is required.";
+                return;
+            }
+            if (!email.endsWith('@atlantis.student.com')) {
+                document.getElementById('registerEmailError').innerHTML = "Email must end with @atlantis.student.com.";
+                return;
+            }
+            if (!educationLevel) {
+                document.getElementById('registerLevelError').innerHTML = "Education level is required.";
+                return;
+            }
+            if (password.length < 6) {
+                document.getElementById('registerPasswordError').innerHTML = "Password must be at least 6 characters.";
+                return;
+            }
+            if (password !== confirmPassword) {
+                document.getElementById('confirmPasswordError').innerHTML = "Passwords do not match!";
+                return;
+            }
+
+            auth.createUser WithEmailAndPassword(email, password)
+                .then(userCredential => {
+                    const userId = userCredential.user.uid;
+                    return database.ref('users/' + userId).set({
+                        name: name,
+                        email: email,
+                        education_level: educationLevel,
+                        points: {
+                            physics: 0,
+                            chemistry: 0,
+                            biology: 0,
+                            indonesian: 0,
+                            english: 0,
+                            math: 0
+                        },
+                        total_score: 0
+                    });
+                })
+                .then(() => {
+                    alert("Registration successful!");
+                    showLogin();
+                })
+                .catch(error => {
+                    document.getElementById('registerEmailError').innerHTML = error.message;
+                });
+        }
+
+        // Change password function
+        function changePassword() {
+            const newPassword = prompt("Enter new password:");
+            const user = auth.currentUser ;
+
+            user.updatePassword(newPassword).then(() => {
+                alert("Password changed successfully!");
+            }).catch(error => {
+                alert(error.message);
+            });
+        }
+
+        // Logout function
+        function logout() {
+            auth.signOut().then(() => {
+                showLogin();
+            });
+        }
+
+        // Monitor authentication state
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                const userId = user.uid;
+                database.ref('users/' + userId).once('value').then(snapshot => {
+                    const userData = snapshot.val();
+                    showDashboard(userData);
+                });
+            } else {
+                showLogin();
+            }
+        });
+    </script>
 </body>
 </html>
