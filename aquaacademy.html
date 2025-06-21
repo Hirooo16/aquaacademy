@@ -1254,78 +1254,54 @@ function loadProfile() {
 function loadLeaderboards() {
     const leaderboardDiv = document.getElementById('allLeaderboards');
     leaderboardDiv.innerHTML = '';
-
     db.ref('users').once('value').then(snapshot => {
         const data = snapshot.val();
-        const subjects = ["physics", "chemistry", "biology", "indonesian", "english", "math"];
-        const educationLevels = ["SD", "SMP", "SMA"];
-
-        educationLevels.forEach(level => {
-            leaderboardDiv.innerHTML += `<div class="education-section">
-                <h2>Leaderboard - ${level}</h2>`;
-
-            subjects.forEach(subject => {
-                let scores = [];
-
-                for (let uid in data) {
-                    const user = data[uid];
-                    if (user.educationLevel === level) {
-                        const pointData = user.points && typeof user.points === 'object' ? user.points : {};
-                        const score = typeof pointData[subject] === 'number' ? pointData[subject] : 0;
-                        scores.push({ name: user.name || "Unknown", score });
-                    }
-                }
-
-                if (scores.length === 0) return;
-
-                scores.sort((a, b) => b.score - a.score);
-
-                let tableRows = scores.slice(0, 10).map((user, index) =>
-                    `<tr><td>${index + 1}</td><td>${user.name}</td><td>${user.score}</td></tr>`).join('');
-
-                leaderboardDiv.innerHTML += `
-                    <div class="leaderboard-subject">
-                        <h4>${subject.toUpperCase()} Leaderboard (Top 10)</h4>
-                        <table>
-                            <thead><tr><th>Rank</th><th>Name</th><th>Score</th></tr></thead>
-                            <tbody>${tableRows}</tbody>
-                        </table>
-                    </div>`;
-            });
-
-            // Overall leaderboard
-            let overall = [];
-
+        const subjects = ["physics","chemistry","biology","indonesian","english","math"];
+        
+        subjects.forEach(sub => {
+            let scores = [];
             for (let uid in data) {
                 const user = data[uid];
-                if (user.educationLevel === level) {
-                    const score = typeof user.total_score === 'number' ? user.total_score : 0;
-                    overall.push({ name: user.name || "Unknown", score });
-                }
+                const score = user.points && user.points[sub] ? user.points[sub] : 0;
+                scores.push({ name: user.name, score });
             }
+            scores.sort((a, b) => b.score - a.score);
+            
+            let tableRows = scores.slice(0, 10).map((user, index) =>
+                <tr><td>${index + 1}</td><td>${user.name}</td><td>${user.score}</td></tr>).join('');
 
-            if (overall.length > 0) {
-                overall.sort((a, b) => b.score - a.score);
-
-                let overallRows = overall.slice(0, 10).map((user, index) =>
-                    `<tr><td>${index + 1}</td><td>${user.name}</td><td>${user.score}</td></tr>`).join('');
-
-                leaderboardDiv.innerHTML += `
-                    <div class="leaderboard-subject">
-                        <h3>Overall ${level} Leaderboard (Top 10)</h3>
-                        <table>
-                            <thead><tr><th>Rank</th><th>Name</th><th>Score</th></tr></thead>
-                            <tbody>${overallRows}</tbody>
-                        </table>
-                    </div>`;
-            }
-
-            leaderboardDiv.innerHTML += `</div>`; // close education section
+            leaderboardDiv.innerHTML += 
+                <div class="leaderboard-subject">
+                    <h4>${sub.toUpperCase()} Leaderboard (Top 10)</h4>
+                    <table>
+                        <thead><tr><th>Rank</th><th>Name</th><th>Score</th></tr></thead>
+                        <tbody>${tableRows}</tbody>
+                    </table>
+                </div>;
         });
+
+        // Leaderboard Keseluruhan
+        let overall = [];
+        for (let uid in data) {
+            const user = data[uid];
+            const score = user.total_score || 0;
+            overall.push({ name: user.name, score });
+        }
+        overall.sort((a, b) => b.score - a.score);
+
+        let overallRows = overall.slice(0, 10).map((user, index) =>
+            <tr><td>${index + 1}</td><td>${user.name}</td><td>${user.score}</td></tr>).join('');
+
+        leaderboardDiv.innerHTML += 
+            <div class="leaderboard-subject">
+                <h3>Overall Leaderboard (Top 10)</h3>
+                <table>
+                    <thead><tr><th>Rank</th><th>Name</th><th>Score</th></tr></thead>
+                    <tbody>${overallRows}</tbody>
+                </table>
+            </div>;
     });
 }
-
-
 
 // =================== LOGIKA TOMBOL ===================
 document.querySelectorAll('nav button[data-page]').forEach(button => {
