@@ -325,20 +325,37 @@ function loadLeaderboards() {
                 scores.push({name: data[uid].name, score: data[uid].points[sub] || 0});
             }
             scores.sort((a, b) => b.score - a.score);
-            leaderboardDiv.innerHTML += `<h4>${sub.toUpperCase()} Leaderboard</h4>`;
-            scores.forEach(s => {
-                leaderboardDiv.innerHTML += `<div>${s.name}: ${s.score}</div>`;
-            });
+            
+            // Buat Table
+            let tableRows = scores.slice(0, 10).map((user, index) =>
+                `<tr><td>${index + 1}</td><td>${user.name}</td><td>${user.score}</td></tr>`).join('');
+
+            leaderboardDiv.innerHTML += `
+                <div class="leaderboard-subject">
+                    <h4>${sub.toUpperCase()} Leaderboard (Top 10)</h4>
+                    <table>
+                        <thead><tr><th>Rank</th><th>Name</th><th>Score</th></tr></thead>
+                        <tbody>${tableRows}</tbody>
+                    </table>
+                </div>`;
         });
+        // Overall Leaderboard
         let overall = [];
         for (let uid in data) {
             overall.push({name: data[uid].name, score: data[uid].total_score || 0});
         }
         overall.sort((a, b) => b.score - a.score);
-        leaderboardDiv.innerHTML += `<h3>Overall Leaderboard</h3>`;
-        overall.forEach(s => {
-            leaderboardDiv.innerHTML += `<div>${s.name}: ${s.score}</div>`;
-        });
+        let overallRows = overall.slice(0, 10).map((user, index) =>
+            `<tr><td>${index + 1}</td><td>${user.name}</td><td>${user.score}</td></tr>`).join('');
+
+        leaderboardDiv.innerHTML += `
+            <div class="leaderboard-subject">
+                <h3>Overall Leaderboard (Top 10)</h3>
+                <table>
+                    <thead><tr><th>Rank</th><th>Name</th><th>Score</th></tr></thead>
+                    <tbody>${overallRows}</tbody>
+                </table>
+            </div>`;
     });
 }
 
